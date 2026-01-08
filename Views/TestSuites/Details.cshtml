@@ -1,0 +1,29 @@
+﻿@model WebsiteQL_Testcase.Models.TestSuite
+
+@{
+    ViewData["Title"] = "Chi tiết Test Suite";
+}
+
+<h2 class="mb-4">@ViewData["Title"]: @Model.Name</h2>
+
+<div class="card">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3 fw-bold">Tên Suite</dt>
+            <dd class="col-sm-9">@Model.Name</dd>
+
+            <dt class="col-sm-3 fw-bold">Mô tả</dt>
+            <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.Description) ? "-" : Model.Description)</dd>
+
+            <dt class="col-sm-3 fw-bold">Project</dt>
+            <dd class="col-sm-9">@Model.Project.Name</dd>
+
+            <dt class="col-sm-3 fw-bold">Số Test Case</dt>
+            <dd class="col-sm-9">@Model.TestCases.Count</dd>
+        </dl>
+    </div>
+    <div class="card-footer text-end">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Sửa</a>
+        <a asp-action="Index" asp-route-projectId="@Model.ProjectId" class="btn btn-secondary">Quay lại danh sách</a>
+    </div>
+</div>

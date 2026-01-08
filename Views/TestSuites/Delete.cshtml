@@ -1,0 +1,39 @@
+﻿@model WebsiteQL_Testcase.Models.TestSuite
+
+@{
+    ViewData["Title"] = "Xóa Test Suite";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+<div class="alert alert-danger">
+    <strong>Cảnh báo!</strong> Xóa Test Suite sẽ xóa luôn tất cả Test Case và Test Step bên trong.
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3 fw-bold">Tên Suite</dt>
+            <dd class="col-sm-9">@Model.Name</dd>
+
+            <dt class="col-sm-3 fw-bold">Mô tả</dt>
+            <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.Description) ? "-" : Model.Description)</dd>
+
+            <dt class="col-sm-3 fw-bold">Project</dt>
+            <dd class="col-sm-9">@Model.Project.Name</dd>
+
+            <dt class="col-sm-3 fw-bold">Số Test Case</dt>
+            <dd class="col-sm-9">@Model.TestCases.Count</dd>
+        </dl>
+    </div>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="ProjectId" />
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-danger">Xóa vĩnh viễn</button>
+        <a asp-action="Index" asp-route-projectId="@Model.ProjectId" class="btn btn-secondary">Hủy bỏ</a>
+    </div>
+</form>

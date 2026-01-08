@@ -1,0 +1,71 @@
+﻿@using WebsiteQL_Testcase.Models.Enums
+@model IEnumerable<WebsiteQL_Testcase.Models.TestExecution>
+
+@{
+    ViewData["Title"] = "Lịch Sử Chạy Test";
+    var testCase = Model.FirstOrDefault()?.TestCase;
+    var testCaseCode = testCase?.Code ?? "Không xác định";
+    var testCaseTitle = testCase?.Title ?? "Không xác định";
+    var suiteName = testCase?.TestSuite?.Name ?? "Không xác định";
+    var projectName = testCase?.TestSuite?.Project?.Name ?? "Không xác định";
+}
+
+<div class="container py-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">
+                Lịch Sử Chạy Test: <strong>@testCaseCode - @testCaseTitle</strong>
+            </h3>
+            <p class="mb-0">Suite: @suiteName | Project: @projectName</p>
+        </div>
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <a asp-controller="TestCases" asp-action="Details" asp-route-id="@testCase?.Id" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i> Quay lại chi tiết Test Case
+                </a>
+            </div>
+
+            @if (!Model.Any())
+            {
+                <p class="text-muted">Chưa có lần chạy test nào.</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Ngày Chạy</th>
+                                <th>Kết Quả</th>
+                                <th>Actual Result</th>
+                                <th>Note / Bug Link</th>
+                                <th>Người Chạy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var execution in Model.OrderByDescending(e => e.ExecutedAt))
+                            {
+                                var badgeClass = execution.Result switch
+                                {
+                                    TestResult.Pass => "bg-success",
+                                    TestResult.Fail => "bg-danger",
+                                    TestResult.Pending => "bg-warning",
+                                    TestResult.Skipped => "bg-secondary",
+                                    _ => "bg-light text-dark"
+                                };
+
+                                <tr>
+                                    <td>@execution.ExecutedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td><span class="badge @badgeClass">@execution.Result</span></td>
+                                    <td>@(string.IsNullOrEmpty(execution.ActualResult) ? "-" : execution.ActualResult)</td>
+                                    <td>@(string.IsNullOrEmpty(execution.Note) ? "-" : execution.Note)</td>
+                                    <td>@(execution.ExecutedBy?.UserName ?? "Không xác định")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

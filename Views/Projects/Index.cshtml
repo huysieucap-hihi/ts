@@ -1,0 +1,56 @@
+﻿@model IEnumerable<WebsiteQL_Testcase.Models.Project>
+
+@{
+    ViewData["Title"] = "Danh sách Project";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>@ViewData["Title"]</h2>
+    <a asp-action="Create" class="btn btn-primary">+ Tạo Project Mới</a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <p>Chưa có project nào. <a asp-action="Create">Tạo project đầu tiên</a>.</p>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Tên Project</th>
+                <th>Mô tả</th>
+                <th>Ngày tạo</th>
+                <th>Số Test Suite</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><strong>@Html.DisplayFor(modelItem => item.Name)</strong></td>
+                    <td>@(string.IsNullOrEmpty(item.Description) ? "-" : item.Description)</td>
+                    <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@item.TestSuites.Count</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white">Chi tiết</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Xóa</a>
+                        <a asp-controller="TestSuites" asp-action="Index" asp-route-projectId="@item.Id" class="btn btn-sm btn-primary">
+                            <i class="bi bi-collection-fill"></i> Xem Test Suites (@item.TestSuites.Count)
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

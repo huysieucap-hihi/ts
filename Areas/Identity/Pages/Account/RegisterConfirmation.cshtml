@@ -1,0 +1,51 @@
+﻿@page
+@model RegisterConfirmationModel
+@{
+    ViewData["Title"] = "Xác nhận đăng ký";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+
+                    <h1 class="card-title mb-4">
+                        @ViewData["Title"]
+                    </h1>
+
+                    @if (Model.DisplayConfirmAccountLink)
+                    {
+                        <div class="alert alert-warning">
+                            <p class="mb-2">
+                                Ứng dụng hiện chưa được cấu hình chức năng gửi email thật.
+                            </p>
+                            <p class="mb-2">
+                                Xem
+                                <a href="https://aka.ms/aspaccountconf" target="_blank">
+                                    tài liệu hướng dẫn
+                                </a>
+                                để cấu hình dịch vụ gửi email.
+                            </p>
+
+                            <a id="confirm-link"
+                               class="btn btn-primary mt-3"
+                               href="@Model.EmailConfirmationUrl">
+                                Xác nhận tài khoản
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-success">
+                            <p class="mb-0">
+                                Vui lòng kiểm tra email của bạn để xác nhận tài khoản.
+                            </p>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,161 @@
+﻿@model WebsiteQL_Testcase.Models.TestCase
+
+@{
+    ViewData["Title"] = "Tạo Test Case Mới";
+    var testSuiteName = ViewData["TestSuiteName"] as string;
+    var projectName = ViewData["ProjectName"] as string;
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+<p><strong>Test Suite:</strong> @testSuiteName | <strong>Project:</strong> @projectName</p>
+<!-- HIỂN THỊ LỖI CHI TIẾT (DEBUG) -->
+@if (ViewBag.ModelStateErrors != null)
+{
+    <div class="alert alert-warning">
+        <strong>Lỗi validation (debug):</strong>
+        <ul>
+            @foreach (var error in ViewBag.ModelStateErrors as Dictionary<string, string[]>)
+            {
+                <li>@error.Key: @string.Join(", ", error.Value)</li>
+            }
+        </ul>
+    </div>
+}
+<form asp-action="Create" method="post">
+    <input type="hidden" asp-for="TestSuiteId" />
+    <input type="hidden" asp-for="CreatedAt" />
+
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="Code" class="form-label fw-bold"></label>
+                <input asp-for="Code" class="form-control" placeholder="VD: TC_LOGIN_001" required />
+                <span asp-validation-for="Code" class="text-danger"></span>
+                <div class="form-text">Code sẽ được sử dụng để tham chiếu Test Case</div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label fw-bold"></label>
+                <input asp-for="Title" class="form-control" placeholder="Nhập tiêu đề Test Case" required />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Priority" class="form-label fw-bold"></label>
+                <select asp-for="Priority" class="form-select">
+                    <option value="">Chọn độ ưu tiên</option>
+                    <option value="1">Low</option>
+                    <option value="2" selected>Medium</option>
+                    <option value="3">High</option>
+                    <option value="4">Critical</option>
+                </select>
+                <span asp-validation-for="Priority" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label asp-for="Status" class="form-label fw-bold"></label>
+                <select asp-for="Status" class="form-select">
+                    <option value="1" selected>Draft</option>
+                    <option value="2">Active</option>
+                    <option value="3">Inactive</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label fw-bold"></label>
+                <textarea asp-for="Description" class="form-control" rows="6" placeholder="Mô tả chi tiết Test Case..."></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Steps -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-list-ol"></i> Test Steps
+                <button type="button" class="btn btn-sm btn-outline-primary float-end" onclick="addStep()">
+                    <i class="bi bi-plus"></i> Thêm Step
+                </button>
+            </h5>
+        </div>
+        <div class="card-body">
+            <div id="steps-container">
+                <div class="step-row mb-3" data-step="1">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Action</label>
+                            <textarea name="Actions[0]" class="form-control" rows="2" placeholder="Hành động thực hiện (Step 1)" required></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Expected Result</label>
+                            <textarea name="ExpectedResults[0]" class="form-control" rows="2" placeholder="Kết quả mong đợi"></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeStep(this)">Xóa Step</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-success">Tạo Test Case</button>
+        <a asp-action="Index" asp-route-testSuiteId="@Model.TestSuiteId" class="btn btn-secondary">Quay lại</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        let stepCounter = 1;
+
+        function addStep() {
+            stepCounter++;
+            const container = document.getElementById('steps-container');
+            const newStep = document.createElement('div');
+            newStep.className = 'step-row mb-3';
+            newStep.dataset.step = stepCounter;
+            newStep.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Action</label>
+                        <textarea name="Actions[${stepCounter - 1}]" class="form-control" rows="2" placeholder="Hành động thực hiện (Step ${stepCounter})" required></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Expected Result</label>
+                        <textarea name="ExpectedResults[${stepCounter - 1}]" class="form-control" rows="2" placeholder="Kết quả mong đợi"></textarea>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeStep(this)">Xóa Step</button>
+                </div>
+            `;
+            container.appendChild(newStep);
+        }
+
+        function removeStep(button) {
+            const stepRow = button.closest('.step-row');
+            stepRow.remove();
+            // Re-index remaining steps
+            const steps = document.querySelectorAll('.step-row');
+            steps.forEach((step, index) => {
+                step.dataset.step = index + 1;
+                const action = step.querySelector('textarea[name^="Actions"]');
+                const expected = step.querySelector('textarea[name^="ExpectedResults"]');
+                if (action) action.name = `Actions[${index}]`;
+                if (expected) expected.name = `ExpectedResults[${index}]`;
+            });
+            stepCounter = steps.length;
+        }
+    </script>
+}

@@ -1,0 +1,59 @@
+﻿@model IEnumerable<WebsiteQL_Testcase.Models.TestSuite>
+
+@{
+    ViewData["Title"] = "Test Suites";
+    var projectId = ViewData["ProjectId"] as Guid?;
+    var projectName = ViewData["ProjectName"] as string;
+}
+
+<h2>Test Suites trong Project: <strong>@projectName</strong></h2>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <a asp-controller="Projects" asp-action="Index" class="btn btn-outline-secondary">
+        ← Quay lại danh sách Project
+    </a>
+    <a asp-action="Create" asp-route-projectId="@projectId" class="btn btn-primary">
+        + Tạo Test Suite Mới
+    </a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <p>Chưa có Test Suite nào. <a asp-action="Create" asp-route-projectId="@projectId">Tạo Suite đầu tiên</a>.</p>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Tên Suite</th>
+                <th>Mô tả</th>
+                <th>Số Test Case</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><strong>@item.Name</strong></td>
+                    <td>@(string.IsNullOrEmpty(item.Description) ? "-" : item.Description)</td>
+                    <td>@item.TestCases.Count</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white">Chi tiết</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

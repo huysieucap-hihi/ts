@@ -1,0 +1,36 @@
+﻿@model IEnumerable<dynamic>
+
+@if (!Model.Any())
+{
+    <li class="dropdown-item text-muted disabled">
+        Chưa có Test Case nào được chạy
+    </li>
+}
+else
+{
+    @foreach (var tc in Model)
+    {
+        <li>
+            <a class="dropdown-item d-flex justify-content-between align-items-center"
+               asp-controller="TestExecutions" asp-action="History" asp-route-testCaseId="@tc.Id">
+                <span>
+                    <strong>@tc.Code</strong> - @tc.Title
+                    <br />
+                    <small class="text-muted">@tc.ProjectName / @tc.SuiteName</small>
+                </span>
+                <span class="badge @(tc.LatestResult == WebsiteQL_Testcase.Models.Enums.TestResult.Pass ? "bg-success" :
+                                                           tc.LatestResult == WebsiteQL_Testcase.Models.Enums.TestResult.Fail ? "bg-danger" :
+                                                           tc.LatestResult == WebsiteQL_Testcase.Models.Enums.TestResult.Pending ? "bg-warning" : "bg-secondary")">
+            @tc.LatestResult
+        </span>
+    </a>
+</li>
+    }
+
+    <li><hr class="dropdown-divider"></li>
+    <li>
+        <a class="dropdown-item text-center fw-bold" asp-controller="Projects" asp-action="Index">
+            Xem tất cả Test Cases →
+        </a>
+    </li>
+}

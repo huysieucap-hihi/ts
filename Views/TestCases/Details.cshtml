@@ -1,0 +1,181 @@
+﻿@model WebsiteQL_Testcase.Models.TestCase
+
+@{
+    ViewData["Title"] = $"Test Case: {Model.Code} - {Model.Title}";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>@Model.Code - @Model.Title</h2>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Sửa Test Case</a>
+</div>
+
+<div class="row">
+    <!-- Thông tin cơ bản -->
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Thông tin Test Case</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">Code</dt>
+                    <dd class="col-sm-9"><strong>@Model.Code</strong></dd>
+
+                    <dt class="col-sm-3">Title</dt>
+                    <dd class="col-sm-9">@Model.Title</dd>
+
+                    <dt class="col-sm-3">Priority</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge @(Model.Priority == WebsiteQL_Testcase.Models.Enums.TestPriority.Critical ? "bg-danger" :
+                                                            Model.Priority == WebsiteQL_Testcase.Models.Enums.TestPriority.High ? "bg-warning" :
+                                                            Model.Priority == WebsiteQL_Testcase.Models.Enums.TestPriority.Medium ? "bg-info" : "bg-secondary")">
+                            @Model.Priority
+                        </span>
+                    </dd>
+
+                    <dt class="col-sm-3">Status</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge @(Model.Status == WebsiteQL_Testcase.Models.Enums.TestStatus.Active ? "bg-success" :
+                                                            Model.Status == WebsiteQL_Testcase.Models.Enums.TestStatus.Draft ? "bg-warning" : "bg-secondary")">
+                            @Model.Status
+                        </span>
+                    </dd>
+
+                    <dt class="col-sm-3">Test Suite</dt>
+                    <dd class="col-sm-9">@Model.TestSuite.Name</dd>
+
+                    <dt class="col-sm-3">Project</dt>
+                    <dd class="col-sm-9">@Model.TestSuite.Project.Name</dd>
+
+                    <dt class="col-sm-3">Created</dt>
+                    <dd class="col-sm-9">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                    @if (Model.UpdatedAt.HasValue)
+                    {
+                        <dt class="col-sm-3">Updated</dt>
+                        <dd class="col-sm-9">@Model.UpdatedAt.Value.ToString("dd/MM/yyyy HH:mm")</dd>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <dt class="col-sm-3">Description</dt>
+                        <dd class="col-sm-9">@Model.Description</dd>
+                    }
+                </dl>
+            </div>
+        </div>
+
+        <!-- Test Steps -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Test Steps (@Model.Steps.Count steps)</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.Steps.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Step</th>
+                                    <th>Action</th>
+                                    <th>Expected Result</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var step in Model.Steps.OrderBy(s => s.StepNumber))
+                                {
+                                    <tr>
+                                        <th scope="row">@step.StepNumber</th>
+                                        <td>@step.Action</td>
+                                        <td>@step.ExpectedResult</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">Chưa có Test Step nào.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar: Executions & Quick Actions -->
+    <div class="col-md-4">
+        <div class="card sticky-top" style="top: 20px;">
+            <div class="card-header">
+                <h6 class="card-title mb-0">Quick Actions</h6>
+            </div>
+            <div class="card-body">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning w-100 mb-2">Sửa Test Case</a>
+                <a asp-controller="TestExecutions" asp-action="Create" asp-route-testCaseId="@Model.Id" class="btn btn-success w-100 mb-2">Chạy Test</a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger w-100">Xóa</a>
+            </div>
+        </div>
+
+        @if (Model.Executions.Any())
+        {
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">Lịch sử Execution</h6>
+                </div>
+                <div class="card-body">
+                    @foreach (var execution in Model.Executions.OrderByDescending(e => e.ExecutedAt).Take(5))
+                    {
+                        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                            <div>
+                                <span class="badge @(execution.Result == WebsiteQL_Testcase.Models.Enums.TestResult.Pass ? "bg-success" :
+                                                                            execution.Result == WebsiteQL_Testcase.Models.Enums.TestResult.Fail ? "bg-danger" :
+                                                                            execution.Result == WebsiteQL_Testcase.Models.Enums.TestResult.Pending ? "bg-warning" : "bg-secondary")">
+                            @execution.Result
+                        </span>
+                        @if (execution.ExecutedBy != null)
+                                {
+                                    <small class="text-muted">bởi @execution.ExecutedBy.FullName</small>
+                                }
+                            </div>
+                            <small class="text-muted">@execution.ExecutedAt.ToString("dd/MM HH:mm")</small>
+                        </div>
+                    }
+                    @if (Model.Executions.Count > 5)
+                    {
+                        <small class="text-center d-block mt-2">... và @((Model.Executions.Count - 5)) execution khác</small>
+                    }
+                </div>
+            </div>
+        }
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="card-title mb-0">Latest Result</h6>
+            </div>
+            <div class="card-body text-center">
+                @if (Model.LatestResult.HasValue)
+                {
+                    <div class="mb-3">
+                        <i class="bi @(Model.LatestResult == WebsiteQL_Testcase.Models.Enums.TestResult.Pass ? "bi-check-circle-fill text-success" :
+                                                         Model.LatestResult == WebsiteQL_Testcase.Models.Enums.TestResult.Fail ? "bi-x-circle-fill text-danger" :
+                                                         Model.LatestResult == WebsiteQL_Testcase.Models.Enums.TestResult.Pending ? "bi-clock-fill text-warning" : "bi-dash-circle text-secondary") fs-1"></i>
+                    <h5 class="mt-2">@Model.LatestResult</h5>
+                    <small class="text-muted">@Model.Executions.FirstOrDefault()?.ExecutedAt.ToString("dd/MM/yyyy HH:mm")</small>
+                </div>
+                                }
+                else
+                {
+                    <div class="text-muted">
+                        <i class="bi bi-hourglass-split fs-1"></i>
+                        <h5 class="mt-2">Chưa chạy</h5>
+                        <small>Lần đầu chạy sẽ là lần đầu tiên</small>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a asp-action="Index" asp-route-testSuiteId="@Model.TestSuiteId" class="btn btn-secondary">← Quay lại danh sách</a>
+</div>

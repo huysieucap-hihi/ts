@@ -1,0 +1,66 @@
+﻿@model WebsiteQL_Testcase.Models.TestCase
+
+@{
+    ViewData["Title"] = "Xóa Test Case";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+<div class="alert alert-danger">
+    <strong>Cảnh báo!</strong> Xóa Test Case sẽ xóa luôn tất cả Test Steps và lịch sử Execution.
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3 fw-bold">Code</dt>
+                    <dd class="col-sm-9">@Model.Code</dd>
+
+                    <dt class="col-sm-3 fw-bold">Title</dt>
+                    <dd class="col-sm-9">@Model.Title</dd>
+
+                    <dt class="col-sm-3 fw-bold">Priority</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge @(Model.Priority == WebsiteQL_Testcase.Models.Enums.TestPriority.Critical ? "bg-danger" :
+                                                            Model.Priority == WebsiteQL_Testcase.Models.Enums.TestPriority.High ? "bg-warning" :
+                                                            Model.Priority == WebsiteQL_Testcase.Models.Enums.TestPriority.Medium ? "bg-info" : "bg-secondary")">
+                            @Model.Priority
+                        </span>
+                    </dd>
+
+                    <dt class="col-sm-3 fw-bold">Status</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge @(Model.Status == WebsiteQL_Testcase.Models.Enums.TestStatus.Active ? "bg-success" :
+                                                            Model.Status == WebsiteQL_Testcase.Models.Enums.TestStatus.Draft ? "bg-warning" : "bg-secondary")">
+                            @Model.Status
+                        </span>
+                    </dd>
+
+                    <dt class="col-sm-3 fw-bold">Test Suite</dt>
+                    <dd class="col-sm-9">@Model.TestSuite.Name</dd>
+
+                    <dt class="col-sm-3 fw-bold">Số Steps</dt>
+                    <dd class="col-sm-9">@Model.Steps.Count</dd>
+
+                    @if (Model.Executions.Any())
+                    {
+                        <dt class="col-sm-3 fw-bold">Số Executions</dt>
+                        <dd class="col-sm-9">@Model.Executions.Count</dd>
+                    }
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="TestSuiteId" />
+
+    <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-danger">Xóa vĩnh viễn</button>
+        <a asp-action="Index" asp-route-testSuiteId="@Model.TestSuiteId" class="btn btn-secondary">Hủy bỏ</a>
+    </div>
+</form>

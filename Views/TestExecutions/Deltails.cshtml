@@ -1,0 +1,49 @@
+﻿@model WebsiteQL_Testcase.Models.TestExecution
+
+@{
+    ViewData["Title"] = "Chi tiết Execution";
+}
+
+<h3>
+    Execution Result:
+    <span class="badge fs-4 @(Model.Result == WebsiteQL_Testcase.Models.Enums.TestResult.Pass ? "bg-success" :
+                                        Model.Result == WebsiteQL_Testcase.Models.Enums.TestResult.Fail ? "bg-danger" :
+                                        Model.Result == WebsiteQL_Testcase.Models.Enums.TestResult.Pending ? "bg-warning" : "bg-secondary")">
+        @Model.Result
+    </span>
+</h3>
+
+<p class="text-muted">
+    Test Case: <strong>@Model.TestCase.Code - @Model.TestCase.Title</strong><br />
+    Thực hiện lúc: @Model.ExecutedAt.ToString("dd/MM/yyyy HH:mm")
+    @(Model.ExecutedBy != null ? $"bởi {Model.ExecutedBy.FullName ?? Model.ExecutedBy.UserName}" : "")
+</p>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header">Actual Result</div>
+            <div class="card-body">
+                <p class="preserve-whitespace">@(string.IsNullOrWhiteSpace(Model.ActualResult) ? "Không có mô tả" : Model.ActualResult)</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header">Note / Bug</div>
+            <div class="card-body">
+                <p class="preserve-whitespace">@(string.IsNullOrWhiteSpace(Model.Note) ? "Không có ghi chú" : Model.Note)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<a asp-controller="TestCases" asp-action="Details" asp-route-id="@Model.TestCaseId" class="btn btn-secondary">
+    ← Quay lại Test Case
+</a>
+
+<style>
+    .preserve-whitespace {
+        white-space: pre-wrap;
+    }
+</style>

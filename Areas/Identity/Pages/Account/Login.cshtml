@@ -1,0 +1,145 @@
+﻿@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Đăng Nhập";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5">
+                    <div class="text-center mb-5">
+                        <h1 class="display-6 fw-bold text-primary">Test Case Management</h1>
+                        <p class="text-muted fs-5">Đăng nhập để tiếp tục</p>
+                    </div>
+
+                    <form id="account" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3" role="alert"></div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Email" class="form-control form-control-lg" autocomplete="username" aria-required="true"  />
+                            <label asp-for="Input.Email">
+                                <i class="bi bi-envelope me-2"></i>Email
+                            </label>
+                            <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3 position-relative">
+                            <input asp-for="Input.Password"
+                                   class="form-control form-control-lg pe-5"
+                                   id="loginPassword"
+                                   autocomplete="current-password"
+                                   aria-required="true" />
+
+                            <label asp-for="Input.Password">
+                                <i class="bi bi-lock me-2"></i>Mật khẩu
+                            </label>
+
+                            <!-- Icon hiện mật khẩu -->
+                            <span class="password-toggle" id="toggleLoginPassword">
+                                <i class="bi bi-eye-fill"></i>
+                            </span>
+
+                            <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                        </div>
+
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" asp-for="Input.RememberMe" id="rememberMe" />
+                                <label class="form-check-label text-muted" for="rememberMe">
+                                    Ghi nhớ đăng nhập
+                                </label>
+                            </div>
+                            <a asp-page="./ForgotPassword" class="text-decoration-none small text-primary">
+                                Quên mật khẩu?
+                            </a>
+                        </div>
+
+                        <button id="login-submit" type="submit" class="btn btn-primary btn-lg w-100 mb-4 rounded-3 shadow-sm">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Đăng Nhập
+                        </button>
+
+                        <div class="text-center">
+                            <p class="text-muted mb-2">Chưa có tài khoản?</p>
+                            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="btn btn-outline-success w-100 rounded-3">
+                                <i class="bi bi-person-plus me-2"></i>Đăng Ký Tài Khoản Mới
+                            </a>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <small class="text-muted">
+                                <a asp-page="./ResendEmailConfirmation" class="text-decoration-none">Gửi lại email xác nhận</a>
+                            </small>
+                        </div>
+                    </form>
+
+                    <!-- External Login (Google, Facebook,...) -->
+                    @{
+                        if ((Model.ExternalLogins?.Count ?? 0) > 0)
+                        {
+                            <div class="mt-5 pt-4 border-top">
+                                <p class="text-center text-muted mb-4">Hoặc đăng nhập bằng</p>
+                                <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                                    <div class="d-grid gap-3">
+                                        @foreach (var provider in Model.ExternalLogins!)
+                                        {
+                                            <button type="submit" class="btn btn-outline-dark btn-lg rounded-3" name="provider" value="@provider.Name">
+                                                @if (provider.Name.Contains("Google"))
+                                                {
+                                                    <i class="bi bi-google me-2"></i>
+                                                }
+                                                else if (provider.Name.Contains("Facebook"))
+                                                {
+                                                    <i class="bi bi-facebook me-2"></i>
+                                                }
+                                                else if (provider.Name.Contains("Microsoft"))
+                                                {
+                                                    <i class="bi bi-microsoft me-2"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="bi bi-globe me-2"></i>
+                                                }
+                                                Đăng nhập với @provider.DisplayName
+                                            </button>
+                                        }
+                                    </div>
+                                </form>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <small class="text-muted">© 2025 Test Case Management System</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggle = document.getElementById("toggleLoginPassword");
+            const input = document.getElementById("loginPassword");
+            const icon = toggle.querySelector("i");
+
+            toggle.addEventListener("click", function (e) {
+                e.preventDefault();
+
+                const isPassword = input.type === "password";
+                input.type = isPassword ? "text" : "password";
+
+                icon.classList.toggle("bi-eye-fill");
+                icon.classList.toggle("bi-eye-slash-fill");
+
+                input.focus();
+            });
+        });
+    </script>
+
+}

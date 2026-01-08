@@ -1,0 +1,6 @@
+[user]
+	name = Nguyen Thanh Long
+	email = thanhlong64204@gmail.com
+[safe]
+	directory = *
+	directory = *
