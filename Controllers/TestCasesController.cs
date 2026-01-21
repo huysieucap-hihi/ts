@@ -27,10 +27,11 @@ namespace WebsiteQL_Testcase.Controllers
             if (testSuite == null)
                 return NotFound("Test Suite không tồn tại.");
 
+            // [QUAN TRỌNG] Truyền đủ ProjectId để nút Quay lại hoạt động
             ViewData["TestSuiteId"] = testSuiteId;
             ViewData["TestSuiteName"] = testSuite.Name;
             ViewData["ProjectId"] = testSuite.ProjectId;
-            ViewData["ProjectName"] = testSuite.Project.Name;
+            ViewData["ProjectName"] = testSuite.Project?.Name;
 
             var testCases = testSuite.TestCases
                 .OrderBy(tc => tc.Code)
@@ -70,9 +71,10 @@ namespace WebsiteQL_Testcase.Controllers
             ViewData["TestSuiteName"] = testSuite.Name;
             ViewData["ProjectName"] = testSuite.Project.Name;
 
-            // Gợi ý Code tự động (ví dụ: TC_001, TC_002...)
+            // Gợi ý Code tự động (ví dụ: TC_001...)
             var count = await _context.TestCases.CountAsync(tc => tc.TestSuiteId == testSuiteId);
-            var suggestedCode = $"TC_{testSuite.Name.ToUpper().Replace(" ", "_")}_{(count + 1):000}";
+            var safeName = testSuite.Name.ToUpper().Replace(" ", "_"); // Xử lý tên suite để tạo mã đẹp hơn
+            var suggestedCode = $"TC_{safeName}_{(count + 1):000}";
 
             var model = new TestCase
             {
@@ -86,47 +88,25 @@ namespace WebsiteQL_Testcase.Controllers
         }
 
         // POST: TestCases/Create
-        // POST: TestCases/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TestCase testCase, List<string> Actions, List<string> ExpectedResults)
         {
-            // BỎ VALIDATION CHO TestSuite (navigation property) ĐỂ TRÁNH LỖI "The TestSuite field is required"
             ModelState.Remove("TestSuite");
-            ModelState.Remove("TestSuiteId"); // Bỏ validation cho TestSuiteId nếu cần
 
-            // Debug: In lỗi ModelState ra Output window
             if (!ModelState.IsValid)
             {
-                var errors = ModelState
-                    .Where(x => x.Value.Errors.Count > 0)
-                    .ToDictionary(
-                        x => x.Key,
-                        x => x.Value.Errors.Select(e => e.ErrorMessage).ToArray()
-                    );
-
-                System.Diagnostics.Debug.WriteLine("=== TESTCASE CREATE ERRORS ===");
-                foreach (var error in errors)
-                {
-                    System.Diagnostics.Debug.WriteLine($"{error.Key}: {string.Join(", ", error.Value)}");
-                }
-                System.Diagnostics.Debug.WriteLine("==================================");
-
-                // Load lại thông tin TestSuite để hiển thị
+                // [FIX LỖI 1] Load lại thông tin hiển thị nếu nhập lỗi
                 var suite = await _context.TestSuites
                     .Include(s => s.Project)
                     .FirstOrDefaultAsync(s => s.Id == testCase.TestSuiteId);
 
                 if (suite != null)
                 {
+                    ViewData["TestSuiteId"] = suite.Id; // Cần cái này cho nút Quay lại
                     ViewData["TestSuiteName"] = suite.Name;
                     ViewData["ProjectName"] = suite.Project.Name;
                 }
-                else
-                {
-                    return NotFound("Test Suite không tồn tại.");
-                }
-
                 return View(testCase);
             }
 
@@ -135,17 +115,20 @@ namespace WebsiteQL_Testcase.Controllers
             testCase.CreatedAt = DateTime.UtcNow;
 
             // Thêm Steps
-            for (int i = 0; i < Actions.Count; i++)
+            if (Actions != null)
             {
-                if (!string.IsNullOrWhiteSpace(Actions[i]))
+                for (int i = 0; i < Actions.Count; i++)
                 {
-                    testCase.Steps.Add(new TestStep
+                    if (!string.IsNullOrWhiteSpace(Actions[i]))
                     {
-                        Id = Guid.NewGuid(),
-                        StepNumber = i + 1,
-                        Action = Actions[i].Trim(),
-                        ExpectedResult = ExpectedResults[i]?.Trim() ?? ""
-                    });
+                        testCase.Steps.Add(new TestStep
+                        {
+                            Id = Guid.NewGuid(),
+                            StepNumber = i + 1,
+                            Action = Actions[i].Trim(),
+                            ExpectedResult = ExpectedResults != null && i < ExpectedResults.Count ? (ExpectedResults[i]?.Trim() ?? "") : ""
+                        });
+                    }
                 }
             }
 
@@ -155,6 +138,7 @@ namespace WebsiteQL_Testcase.Controllers
             TempData["Success"] = "Tạo Test Case thành công!";
             return RedirectToAction(nameof(Index), new { testSuiteId = testCase.TestSuiteId });
         }
+
         // GET: TestCases/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
@@ -176,42 +160,49 @@ namespace WebsiteQL_Testcase.Controllers
         // POST: TestCases/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, TestCase postedTestCase, List<Guid> StepIds, List<int> StepNumbers, List<string> Actions, List<string> ExpectedResults)
+        public async Task<IActionResult> Edit(Guid id, TestCase postedTestCase, List<string> Actions, List<string> ExpectedResults)
         {
             if (id != postedTestCase.Id) return NotFound();
 
-            var testCase = await _context.TestCases
+            // Lấy TestCase gốc từ DB (bao gồm cả Steps để xử lý xóa/thêm)
+            var testCaseInDb = await _context.TestCases
                 .Include(tc => tc.Steps)
                 .FirstOrDefaultAsync(tc => tc.Id == id);
 
-            if (testCase == null) return NotFound();
+            if (testCaseInDb == null) return NotFound();
+
+            // Validate thủ công một chút để bỏ qua các lỗi không cần thiết
+            ModelState.Remove("TestSuite");
 
             if (ModelState.IsValid)
             {
                 try
                 {
                     // Cập nhật thông tin chính
-                    testCase.Code = postedTestCase.Code;
-                    testCase.Title = postedTestCase.Title;
-                    testCase.Description = postedTestCase.Description;
-                    testCase.Priority = postedTestCase.Priority;
-                    testCase.Status = postedTestCase.Status;
-                    testCase.UpdatedAt = DateTime.UtcNow;
+                    testCaseInDb.Code = postedTestCase.Code;
+                    testCaseInDb.Title = postedTestCase.Title;
+                    testCaseInDb.Description = postedTestCase.Description;
+                    testCaseInDb.Priority = postedTestCase.Priority;
+                    testCaseInDb.Status = postedTestCase.Status;
+                    testCaseInDb.UpdatedAt = DateTime.UtcNow;
 
-                    // Xử lý Steps: xóa cũ, thêm mới/cập nhật
-                    _context.TestSteps.RemoveRange(testCase.Steps);
+                    // Xử lý Steps: Xóa hết cũ, thêm mới (Cách đơn giản nhất)
+                    _context.TestSteps.RemoveRange(testCaseInDb.Steps);
 
-                    for (int i = 0; i < Actions.Count; i++)
+                    if (Actions != null)
                     {
-                        if (!string.IsNullOrWhiteSpace(Actions[i]))
+                        for (int i = 0; i < Actions.Count; i++)
                         {
-                            testCase.Steps.Add(new TestStep
+                            if (!string.IsNullOrWhiteSpace(Actions[i]))
                             {
-                                Id = Guid.NewGuid(),
-                                StepNumber = i + 1,
-                                Action = Actions[i].Trim(),
-                                ExpectedResult = ExpectedResults[i]?.Trim() ?? ""
-                            });
+                                testCaseInDb.Steps.Add(new TestStep
+                                {
+                                    Id = Guid.NewGuid(),
+                                    StepNumber = i + 1,
+                                    Action = Actions[i].Trim(),
+                                    ExpectedResult = ExpectedResults != null && i < ExpectedResults.Count ? (ExpectedResults[i]?.Trim() ?? "") : ""
+                                });
+                            }
                         }
                     }
 
@@ -222,7 +213,18 @@ namespace WebsiteQL_Testcase.Controllers
                 {
                     throw;
                 }
-                return RedirectToAction(nameof(Index), new { testSuiteId = testCase.TestSuiteId });
+                return RedirectToAction(nameof(Index), new { testSuiteId = testCaseInDb.TestSuiteId });
+            }
+
+            // [FIX LỖI 2] Nếu lỗi Validation, phải load lại tên Project/Suite để hiển thị Header
+            var suite = await _context.TestSuites
+                .Include(s => s.Project)
+                .FirstOrDefaultAsync(s => s.Id == testCaseInDb.TestSuiteId);
+
+            if (suite != null)
+            {
+                ViewData["TestSuiteName"] = suite.Name;
+                ViewData["ProjectName"] = suite.Project.Name;
             }
 
             return View(postedTestCase);
@@ -235,7 +237,6 @@ namespace WebsiteQL_Testcase.Controllers
 
             var testCase = await _context.TestCases
                 .Include(tc => tc.TestSuite).ThenInclude(s => s.Project)
-                .Include(tc => tc.Executions)
                 .FirstOrDefaultAsync(tc => tc.Id == id);
 
             if (testCase == null) return NotFound();
@@ -251,11 +252,13 @@ namespace WebsiteQL_Testcase.Controllers
             var testCase = await _context.TestCases.FindAsync(id);
             if (testCase != null)
             {
+                var suiteId = testCase.TestSuiteId; // Lưu lại ID để redirect
                 _context.TestCases.Remove(testCase);
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Xóa Test Case thành công!";
+                return RedirectToAction(nameof(Index), new { testSuiteId = suiteId });
             }
-            return RedirectToAction(nameof(Index), new { testSuiteId = testCase.TestSuiteId });
+            return RedirectToAction("Index", "Home"); // Fallback
         }
     }
 }

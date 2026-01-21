@@ -1,8 +1,109 @@
 ﻿@page
 @model ConfirmEmailModel
 @{
-    ViewData["Title"] = "Confirm email";
+    ViewData["Title"] = "Xác nhận thành công";
+    Layout = null;
 }
 
-<h1>@ViewData["Title"]</h1>
-<partial name="_StatusMessage" model="Model.StatusMessage" />
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- ĐOẠN CSS CĂN GIỮA QUAN TRỌNG --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex; /* Dùng Flexbox */
+            justify-content: center; /* Căn giữa ngang */
+            align-items: center; /* Căn giữa dọc */
+            min-height: 100vh; /* Chiều cao 100% màn hình */
+            background: linear-gradient(90deg, #e2e2e2, #c9d6ff); /* Màu nền */
+        }
+
+        .container {
+            width: 500px;
+            background: #fff;
+            border-radius: 30px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, .2);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            color: #2ecc71;
+            margin-bottom: 20px;
+            display: block;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: #666;
+            font-size: 15px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .btn-login {
+            background: #7494ec;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(116, 148, 236, 0.4);
+        }
+
+            .btn-login:hover {
+                background: #5a7bcf;
+                transform: translateY(-2px);
+            }
+
+        @@keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <i class='bx bx-check-circle success-icon'></i>
+        <h1>Xác nhận thành công!</h1>
+        <p>
+            Tuyệt vời! Email của bạn đã được xác thực.<br>
+            Bạn có thể đăng nhập vào hệ thống ngay bây giờ.
+        </p>
+        <a asp-page="./Login" class="btn-login">
+            Đăng nhập ngay <i class='bx bx-right-arrow-alt'></i>
+        </a>
+    </div>
+</body>
+</html>

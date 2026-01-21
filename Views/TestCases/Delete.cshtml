@@ -4,63 +4,74 @@
     ViewData["Title"] = "Xóa Test Case";
 }
 
-<h2 class="mb-4">@ViewData["Title"]</h2>
+@* BỌC TOÀN BỘ TRONG CONTAINER-CENTER *@
+<div class="container-center">
 
-<div class="alert alert-danger">
-    <strong>Cảnh báo!</strong> Xóa Test Case sẽ xóa luôn tất cả Test Steps và lịch sử Execution.
-</div>
+    @* HEADER *@
+    <div class="page-header-container">
+        <div class="page-title">
+            <h2>@ViewData["Title"]</h2>
+        </div>
+    </div>
 
-<div class="row">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-body">
-                <dl class="row mb-0">
-                    <dt class="col-sm-3 fw-bold">Code</dt>
-                    <dd class="col-sm-9">@Model.Code</dd>
+    @* CẢNH BÁO (DANGER ALERT) *@
+    <div class="alert-box danger">
+        <span>
+            <strong>Cảnh báo nguy hiểm!</strong> Hành động này sẽ xóa vĩnh viễn Test Case <strong>@Model.Code</strong> cùng tất cả các Steps và Lịch sử chạy test liên quan.
+        </span>
+    </div>
 
-                    <dt class="col-sm-3 fw-bold">Title</dt>
-                    <dd class="col-sm-9">@Model.Title</dd>
+    @* NỘI DUNG CHI TIẾT *@
+    <div class="content-box" style="max-width: 800px;">
+        <h4 class="box-title">Thông tin xác nhận</h4>
 
-                    <dt class="col-sm-3 fw-bold">Priority</dt>
-                    <dd class="col-sm-9">
-                        <span class="badge @(Model.Priority == WebsiteQL_Testcase.Models.Enums.TestPriority.Critical ? "bg-danger" :
-                                                            Model.Priority == WebsiteQL_Testcase.Models.Enums.TestPriority.High ? "bg-warning" :
-                                                            Model.Priority == WebsiteQL_Testcase.Models.Enums.TestPriority.Medium ? "bg-info" : "bg-secondary")">
-                            @Model.Priority
-                        </span>
-                    </dd>
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="label">Code:</span>
+                <span class="value" style="font-weight: bold; color: #d9534f;">@Model.Code</span>
+            </div>
 
-                    <dt class="col-sm-3 fw-bold">Status</dt>
-                    <dd class="col-sm-9">
-                        <span class="badge @(Model.Status == WebsiteQL_Testcase.Models.Enums.TestStatus.Active ? "bg-success" :
-                                                            Model.Status == WebsiteQL_Testcase.Models.Enums.TestStatus.Draft ? "bg-warning" : "bg-secondary")">
-                            @Model.Status
-                        </span>
-                    </dd>
+            <div class="info-item">
+                <span class="label">Title:</span>
+                <span class="value">@Model.Title</span>
+            </div>
 
-                    <dt class="col-sm-3 fw-bold">Test Suite</dt>
-                    <dd class="col-sm-9">@Model.TestSuite.Name</dd>
+            <div class="info-item">
+                <span class="label">Priority:</span>
+                <span class="badge @Model.Priority.ToString().ToLower()">@Model.Priority</span>
+            </div>
 
-                    <dt class="col-sm-3 fw-bold">Số Steps</dt>
-                    <dd class="col-sm-9">@Model.Steps.Count</dd>
+            <div class="info-item">
+                <span class="label">Status:</span>
+                <span class="badge @Model.Status.ToString().ToLower()">@Model.Status</span>
+            </div>
 
-                    @if (Model.Executions.Any())
-                    {
-                        <dt class="col-sm-3 fw-bold">Số Executions</dt>
-                        <dd class="col-sm-9">@Model.Executions.Count</dd>
-                    }
-                </dl>
+            <div class="info-item">
+                <span class="label">Thuộc Suite:</span>
+                <span class="value">@Model.TestSuite.Name</span>
+            </div>
+
+            <div class="info-item">
+                <span class="label">Số lượng Steps:</span>
+                <span class="value">@Model.Steps.Count bước</span>
             </div>
         </div>
     </div>
+
+    @* FORM XÁC NHẬN *@
+    <form asp-action="Delete" method="post" style="margin-top: 20px;">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="TestSuiteId" />
+
+        <div class="action-group">
+            <button type="submit" class="btn-custom btn-delete" style="padding: 10px 20px; font-size: 1rem;">
+                ✖ Xác nhận xóa vĩnh viễn
+            </button>
+
+            <a asp-action="Index" asp-route-testSuiteId="@Model.TestSuiteId" class="btn-custom btn-back" style="padding: 10px 20px; font-size: 1rem;">
+                Hủy bỏ
+            </a>
+        </div>
+    </form>
+
 </div>
-
-<form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="Id" />
-    <input type="hidden" asp-for="TestSuiteId" />
-
-    <div class="mt-4 d-flex gap-2">
-        <button type="submit" class="btn btn-danger">Xóa vĩnh viễn</button>
-        <a asp-action="Index" asp-route-testSuiteId="@Model.TestSuiteId" class="btn btn-secondary">Hủy bỏ</a>
-    </div>
-</form>

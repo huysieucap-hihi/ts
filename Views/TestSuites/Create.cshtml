@@ -5,48 +5,53 @@
     var projectName = ViewData["ProjectName"] as string ?? "Không xác định";
 }
 
-<div class="container py-4">
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h3 class="mb-0">@ViewData["Title"]</h3>
-        </div>
-        <div class="card-body">
-            <p class="mb-4 fs-5"><strong>Project:</strong> @projectName</p>
-
-            <form asp-action="Create" method="post">
-                <!-- BẮT BUỘC CÓ DÒNG NÀY, LẤY PROJECTID TỪ MODEL -->
-                <input type="hidden" asp-for="ProjectId" />
-
-                <!-- Hiển thị lỗi rõ ràng -->
-                <div asp-validation-summary="All" class="alert alert-danger mb-4" role="alert"></div>
-
-                <div class="mb-4">
-                    <label asp-for="Name" class="form-label fw-bold">
-                        Tên Test Suite <span class="text-danger">*</span>
-                    </label>
-                    <input asp-for="Name" class="form-control form-control-lg" placeholder="Ví dụ: Smoke Test, Regression Test..." required />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
-
-                <div class="mb-4">
-                    <label asp-for="Description" class="form-label fw-bold">Mô tả (tùy chọn)</label>
-                    <textarea asp-for="Description" class="form-control" rows="5" placeholder="Mô tả chi tiết bộ test này dùng để làm gì..."></textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
-
-                <div class="d-flex gap-3">
-                    <button type="submit" class="btn btn-success btn-lg px-5">
-                        <i class="bi bi-check-circle-fill me-2"></i> Tạo Test Suite
-                    </button>
-                    <a asp-action="Index" asp-route-projectId="@Model.ProjectId" class="btn btn-secondary btn-lg">
-                        <i class="bi bi-arrow-left me-2"></i> Quay lại danh sách
-                    </a>
-                </div>
-            </form>
+@* HEADER CANH GIỮA *@
+<div class="container-center">
+    <div class="page-header-container">
+        <div class="page-title">
+            <h2>@ViewData["Title"]</h2>
+            <div style="font-size: 0.95rem; color: #666; margin-top: 8px;">
+                Thuộc Project: <strong>@projectName</strong>
+            </div>
         </div>
     </div>
 </div>
 
+<form asp-action="Create" method="post">
+    <input type="hidden" asp-for="ProjectId" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    @* FORM CANH GIỮA *@
+    <div class="container-center">
+        <div class="content-box">
+            <h4 class="box-title">Thông tin Test Suite</h4>
+
+            <div class="form-group">
+                <label asp-for="Name" class="form-label required">Tên Test Suite</label>
+                <input asp-for="Name" class="form-input" placeholder="Ví dụ: Smoke Test, Regression Test..." required />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label asp-for="Description" class="form-label">Mô tả (tùy chọn)</label>
+                <textarea asp-for="Description" class="form-input" rows="5" placeholder="Mô tả chi tiết bộ test này dùng để làm gì..."></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="action-group" style="margin-top: 20px;">
+                <button type="submit" class="btn-custom btn-create" style="padding: 10px 25px; font-size: 1rem;">
+                    Lưu Test Suite
+                </button>
+                <a asp-action="Index" asp-route-projectId="@Model.ProjectId" class="btn-custom btn-back" style="padding: 10px 25px; font-size: 1rem;">
+                    Quay lại danh sách
+                </a>
+            </div>
+        </div>
+    </div>
+</form>
+
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

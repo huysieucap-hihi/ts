@@ -8,7 +8,7 @@ using WebsiteQL_Testcase.Models.Enums;
 
 namespace WebsiteQL_Testcase.Controllers
 {
-    [Authorize] // Chỉ user đăng nhập mới được chạy test
+    [Authorize]
     public class TestExecutionsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,22 +24,21 @@ namespace WebsiteQL_Testcase.Controllers
         public async Task<IActionResult> Create(Guid testCaseId)
         {
             var testCase = await _context.TestCases
-                .Include(tc => tc.TestSuite)
-                    .ThenInclude(s => s.Project)
+                .Include(tc => tc.TestSuite).ThenInclude(s => s.Project)
                 .Include(tc => tc.Steps.OrderBy(st => st.StepNumber))
                 .FirstOrDefaultAsync(tc => tc.Id == testCaseId);
 
-            if (testCase == null)
-                return NotFound("Test Case không tồn tại.");
+            if (testCase == null) return NotFound("Test Case không tồn tại.");
 
             var model = new TestExecution
             {
                 TestCaseId = testCaseId,
                 TestCase = testCase,
                 ExecutedAt = DateTime.UtcNow,
-                Result = TestResult.Pending // mặc định
+                Result = TestResult.Pending
             };
 
+            // Truyền dữ liệu cho Header
             ViewData["TestCaseCode"] = testCase.Code;
             ViewData["TestCaseTitle"] = testCase.Title;
             ViewData["TestSuiteName"] = testCase.TestSuite.Name;
@@ -53,47 +52,26 @@ namespace WebsiteQL_Testcase.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TestExecution execution)
         {
-            // BỎ VALIDATION CHO NAVIGATION PROPERTY (TestCase, ExecutedBy)
             ModelState.Remove("TestCase");
             ModelState.Remove("ExecutedBy");
 
-            // Debug: In lỗi ModelState ra Output window
             if (!ModelState.IsValid)
             {
-                var errors = ModelState
-                    .Where(x => x.Value.Errors.Count > 0)
-                    .ToDictionary(
-                        x => x.Key,
-                        x => x.Value.Errors.Select(e => e.ErrorMessage).ToArray()
-                    );
-
-                System.Diagnostics.Debug.WriteLine("=== EXECUTION CREATE ERRORS ===");
-                foreach (var error in errors)
-                {
-                    System.Diagnostics.Debug.WriteLine($"{error.Key}: {string.Join(", ", error.Value)}");
-                }
-                System.Diagnostics.Debug.WriteLine("==================================");
-
-                // Load lại TestCase để hiển thị steps và thông tin
                 var testCase = await _context.TestCases
                     .Include(tc => tc.TestSuite).ThenInclude(s => s.Project)
                     .Include(tc => tc.Steps.OrderBy(st => st.StepNumber))
                     .FirstOrDefaultAsync(tc => tc.Id == execution.TestCaseId);
 
-                if (testCase == null)
+                if (testCase != null)
                 {
-                    return NotFound("Test Case không tồn tại.");
+                    ViewData["TestCaseCode"] = testCase.Code;
+                    ViewData["TestCaseTitle"] = testCase.Title;
+                    ViewData["TestSuiteName"] = testCase.TestSuite.Name;
+                    ViewData["ProjectName"] = testCase.TestSuite.Project.Name;
                 }
-
-                ViewData["TestCaseCode"] = testCase.Code;
-                ViewData["TestCaseTitle"] = testCase.Title;
-                ViewData["TestSuiteName"] = testCase.TestSuite.Name;
-                ViewData["ProjectName"] = testCase.TestSuite.Project.Name;
-
                 return View("Create", execution);
             }
 
-            // Lưu thành công
             var currentUser = await _userManager.GetUserAsync(User);
             execution.ExecutedById = currentUser?.Id;
             execution.ExecutedAt = DateTime.UtcNow;
@@ -105,46 +83,30 @@ namespace WebsiteQL_Testcase.Controllers
             TempData["Success"] = $"Chạy test thành công! Kết quả: {execution.Result}";
             return RedirectToAction("Details", "TestCases", new { id = execution.TestCaseId });
         }
-        // GET: TestExecutions/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null) return NotFound();
 
-            var execution = await _context.TestExecutions
-                .Include(e => e.TestCase)
-                    .ThenInclude(tc => tc.TestSuite)
-                        .ThenInclude(s => s.Project)
-                .Include(e => e.TestCase.Steps.OrderBy(st => st.StepNumber))
-                .Include(e => e.ExecutedBy)
-                .FirstOrDefaultAsync(e => e.Id == id);
-
-            if (execution == null) return NotFound();
-
-            return View(execution);
-        }
-
-        // GET: TestExecutions/History?testCaseId=xxx (lịch sử execution của 1 test case)
         // GET: TestExecutions/History?testCaseId=xxx
         public async Task<IActionResult> History(Guid testCaseId)
         {
+            // 1. Lấy thông tin Test Case ĐỘC LẬP (để luôn có Header & ID cho nút Quay lại)
             var testCase = await _context.TestCases
                 .Include(tc => tc.TestSuite).ThenInclude(s => s.Project)
-                .Include(tc => tc.Executions)
-                    .ThenInclude(e => e.ExecutedBy)
                 .FirstOrDefaultAsync(tc => tc.Id == testCaseId);
 
-            if (testCase == null)
-            {
-                return NotFound("Test Case không tồn tại.");
-            }
+            if (testCase == null) return NotFound("Test Case không tồn tại.");
 
-            var executions = testCase.Executions.OrderByDescending(e => e.ExecutedAt).ToList();
+            // [QUAN TRỌNG NHẤT] Truyền ID này sang View để nút "Quay lại" hoạt động
+            ViewData["TestCaseId"] = testCase.Id;
+            ViewData["TestCaseCode"] = testCase.Code;
+            ViewData["TestCaseTitle"] = testCase.Title;
+            ViewData["SuiteName"] = testCase.TestSuite.Name;
+            ViewData["ProjectName"] = testCase.TestSuite.Project.Name;
 
-            // Gắn TestCase vào mỗi execution để View dùng
-            foreach (var e in executions)
-            {
-                e.TestCase = testCase;
-            }
+            // 2. Lấy danh sách lịch sử
+            var executions = await _context.TestExecutions
+                .Include(e => e.ExecutedBy)
+                .Where(e => e.TestCaseId == testCaseId)
+                .OrderByDescending(e => e.ExecutedAt)
+                .ToListAsync();
 
             return View(executions);
         }

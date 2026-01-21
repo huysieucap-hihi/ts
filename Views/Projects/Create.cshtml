@@ -4,28 +4,49 @@
     ViewData["Title"] = "Tạo Project Mới";
 }
 
-<h2 class="mb-4">@ViewData["Title"]</h2>
+@* BỌC TOÀN BỘ TRONG CONTAINER-CENTER *@
+<div class="container-center">
 
-<form asp-action="Create" method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-    <div class="mb-3">
-        <label asp-for="Name" class="form-label fw-bold"></label>
-        <input asp-for="Name" class="form-control" placeholder="Nhập tên project" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+    @* HEADER *@
+    <div class="page-header-container">
+        <div class="page-title">
+            <h2>@ViewData["Title"]</h2>
+        </div>
     </div>
 
-    <div class="mb-4">
-        <label asp-for="Description" class="form-label fw-bold"></label>
-        <textarea asp-for="Description" class="form-control" rows="5" placeholder="Mô tả project (tùy chọn)"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-    <div class="d-flex gap-2">
-        <button type="submit" class="btn btn-success">Tạo Project</button>
-        <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
-    </div>
-</form>
+        @* NỘI DUNG FORM *@
+        <div class="content-box" style="max-width: 800px;">
+            <h4 class="box-title">Thông tin dự án</h4>
+
+            <div class="form-group">
+                <label asp-for="Name" class="form-label required">Tên Project</label>
+                <input asp-for="Name" class="form-input" placeholder="Nhập tên dự án..." required />
+                <span asp-validation-for="Name" class="text-danger"></span>
+                <small class="form-hint">Tên dự án nên ngắn gọn và dễ nhớ.</small>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label asp-for="Description" class="form-label">Mô tả</label>
+                <textarea asp-for="Description" class="form-input" rows="5" placeholder="Mô tả chi tiết về dự án này..."></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+        </div>
+
+        @* BUTTONS *@
+        <div class="action-group" style="margin-top: 20px;">
+            <button type="submit" class="btn-custom btn-create" style="padding: 10px 25px; font-size: 1rem;">
+                Lưu Project
+            </button>
+            <a asp-action="Index" class="btn-custom btn-back" style="padding: 10px 25px; font-size: 1rem;">
+                Quay lại danh sách
+            </a>
+        </div>
+    </form>
+
+</div>
 
 @section Scripts {
     @{

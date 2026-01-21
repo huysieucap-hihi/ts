@@ -1,72 +1,62 @@
 ﻿@page
 @model LogoutModel
 @{
-    ViewData["Title"] = "Đăng Xuất";
+    ViewData["Title"] = "Đăng xuất";
 }
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-lg border-0 rounded-4">
-                <div class="card-body p-5 text-center">
+<div class="logout-page">
 
-                    @if (User.Identity?.IsAuthenticated ?? false)
-                    {
-                        <div class="mb-5">
-                            <i class="bi bi-box-arrow-right text-primary" style="font-size: 4rem;"></i>
-                            <h2 class="mt-4 fw-bold">Bạn có chắc muốn đăng xuất?</h2>
-                            <p class="text-muted fs-5">
-                                Bạn đang đăng nhập với tài khoản:
-                                <strong>@User.Identity?.Name</strong>
-                            </p>
-                        </div>
+    <div class="logout-card">
 
-                        <form class="d-inline" asp-area="Identity" asp-page="/Account/Logout"
-                              asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-                            <button type="submit" class="btn btn-danger btn-lg px-5 rounded-3 shadow-sm">
-                                <i class="bi bi-box-arrow-right me-2"></i>
-                                Có, Đăng Xuất Ngay
-                            </button>
-                        </form>
-
-                        <div class="mt-4">
-                            <a asp-area="" asp-page="/Index" class="btn btn-outline-secondary btn-lg rounded-3">
-                                <i class="bi bi-arrow-left me-2"></i>Hủy, quay lại trang chủ
-                            </a>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="py-5">
-                            <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
-                            <h2 class="mt-4 fw-bold text-success">Đăng xuất thành công!</h2>
-                            <p class="text-muted fs-5">
-                                Bạn đã rời khỏi hệ thống một cách an toàn.
-                            </p>
-
-                            <div class="mt-5">
-                                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary btn-lg px-5 rounded-3 shadow-sm">
-                                    <i class="bi bi-box-arrow-in-right me-2"></i>
-                                    Đăng Nhập Lại
-                                </a>
-                            </div>
-
-                            <div class="mt-3">
-                                <a asp-area="" asp-page="/Index" class="btn btn-outline-secondary btn-lg rounded-3">
-                                    <i class="bi bi-house me-2"></i>
-                                    Về Trang Chủ
-                                </a>
-                            </div>
-                        </div>
-                    }
-
-                    <div class="text-center mt-5 pt-4 border-top">
-                        <small class="text-muted">
-                            Cảm ơn bạn đã sử dụng <strong>Test Case Management System</strong>
-                        </small>
-                    </div>
-                </div>
+        @if (User.Identity?.IsAuthenticated ?? false)
+        {
+            <div class="logout-header">
+                <div class="logout-icon danger">↪</div>
+                <h2>Bạn có chắc muốn đăng xuất?</h2>
+                <p>
+                    Bạn đang đăng nhập với tài khoản<br />
+                    <strong>@User.Identity?.Name</strong>
+                </p>
             </div>
+
+            <form asp-area="Identity"
+                  asp-page="/Account/Logout"
+                  asp-route-returnUrl="@Url.Page("/", new { area = "" })"
+                  method="post"
+                  class="logout-actions">
+
+                <button type="submit" class="btn btn-danger">
+                    Có, đăng xuất ngay
+                </button>
+
+                <a asp-area="" asp-page="/Index" class="btn btn-outline">
+                    Huỷ, quay lại trang chủ
+                </a>
+            </form>
+        }
+        else
+        {
+            <div class="logout-header">
+                <div class="logout-icon success">✔</div>
+                <h2>Đăng xuất thành công!</h2>
+                <p>Bạn đã rời khỏi hệ thống an toàn.</p>
+            </div>
+
+            <div class="logout-actions">
+                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary">
+                    Đăng nhập lại
+                </a>
+
+                <a asp-area="" asp-page="/Index" class="btn btn-outline">
+                    Về trang chủ
+                </a>
+            </div>
+        }
+
+        <div class="logout-footer">
+            © 2025 <strong>Test Case Management System</strong>
         </div>
+
     </div>
+
 </div>

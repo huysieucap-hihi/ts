@@ -1,22 +1,1313 @@
-html {
-  font-size: 14px;
+﻿/* ================================================================== 
+   1. CORE STYLES (RESET, LAYOUT, COMPONENTS)
+   ================================================================== */
+
+/* ================= RESET ================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
+/* ================= BODY ================= */
 body {
-  margin-bottom: 60px;
+    font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    background: #f8fafc;
+    color: #1f2937;
+}
+
+/* ================= APP LAYOUT ================= */
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ================= SIDEBAR (NỀN TRẮNG - CHỮ ĐEN) ================= */
+.sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background: #ffffff;
+    color: #000000;
+    flex-shrink: 0;
+    border-right: 1px solid #e5e7eb;
+}
+
+.sidebar-header {
+    padding: 16px;
+    font-weight: 600;
+    border-bottom: 1px solid #e5e7eb;
+    color: #000000;
+}
+
+/* Link và Button trong Sidebar */
+.sidebar-item {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    color: #334155;
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+    .sidebar-item:hover,
+    .sidebar-item:focus {
+        background: #f1f5f9;
+        color: #000000;
+        outline: none;
+    }
+
+    .sidebar-item.active {
+        background: #eff6ff;
+        color: #2563eb;
+        font-weight: 700;
+        border-right: 3px solid #2563eb;
+    }
+
+/* ================= DROPDOWN SIDEBAR ================= */
+.sidebar-dropdown {
+    overflow: hidden;
+}
+
+    .sidebar-dropdown .dropdown-menu {
+        max-height: 0;
+        overflow: hidden;
+        background: #f8fafc;
+        transition: max-height 0.25s ease;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .sidebar-dropdown.open .dropdown-menu {
+        max-height: 500px;
+    }
+
+.dropdown-menu a {
+    padding: 10px 32px;
+    display: block;
+    font-size: 13px;
+    color: #475569;
+    text-decoration: none;
+}
+
+    .dropdown-menu a:hover {
+        background: #e2e8f0;
+        color: #000000;
+    }
+
+/* ================= MAIN CONTENT ================= */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #f8fafc;
+    min-width: 0;
+}
+
+/* PAGE HEADER (CHUNG) */
+.page-header {
+    background: #ffffff;
+    color: #1f2937;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+main {
+    padding: 24px;
+    flex: 1;
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+/* ================= COMPONENTS (Grid, Card, Table) ================= */
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.card, .stat-card {
+    background: #ffffff;
+    padding: 16px;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+}
+
+    .stat-card h4 {
+        margin-bottom: 8px;
+    }
+
+    .stat-card.success h4, .stat-card.success strong {
+        color: #16a34a;
+    }
+
+    .stat-card.danger h4, .stat-card.danger strong {
+        color: #dc2626;
+    }
+
+/* ================= BUTTONS (DEFAULT) ================= */
+.btn {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background: #2563eb;
+    color: #fff;
+}
+
+.btn-success {
+    background: #16a34a;
+    color: #fff;
+}
+
+.btn-danger {
+    background: #dc2626;
+    color: #fff;
+}
+
+.btn-warning {
+    background: #f59e0b;
+    color: #000;
+}
+
+.btn-outline {
+    border: 1px solid #94a3b8;
+    background: transparent;
+    color: #1f2937;
+}
+
+    .btn-outline:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+/* ================= TABLES (DEFAULT) ================= */
+table, .table-clean {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+}
+
+thead {
+    background: #f1f5f9;
+    color: #1f2937;
+    font-weight: 600;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* ================= BADGES & PROGRESS ================= */
+.badge {
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+    .badge.fail, .badge.critical {
+        background: #fee2e2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+    }
+
+    .badge.warning, .badge.pending, .badge.high {
+        background: #fef3c7;
+        color: #d97706;
+        border: 1px solid #fde68a;
+    }
+
+    .badge.pass, .badge.active, .badge.medium {
+        background: #dcfce7;
+        color: #16a34a;
+        border: 1px solid #bbf7d0;
+    }
+
+    .badge.none, .badge.draft {
+        background: #f1f5f9;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
+    }
+
+.progress {
+    display: flex;
+    height: 36px;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.progress-pass {
+    background: #16a34a;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-fail {
+    background: #dc2626;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ================= FORMS & ALERTS ================= */
+.form-group {
+    margin-bottom: 12px;
+}
+
+label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #cbd5f5;
+    border-radius: 4px;
+    font-family: inherit;
+}
+
+    input[type="checkbox"] {
+        width: auto;
+    }
+
+.alert-success {
+    background: #dcfce7;
+    color: #166534;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+}
+
+.page-actions {
+    display: flex;
+    justify-content: space-between;
+    margin: 16px 0;
+}
+
+.action-group {
+    display: flex;
+    gap: 6px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #64748b;
+}
+
+/* ================= FOOTER ================= */
+.footer {
+    padding: 12px;
+    text-align: center;
+    background: #ffffff;
+    color: #64748b;
+    margin-top: auto;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* ================= AUTH & USER MENU ================= */
+.public-header {
+    background: #ffffff;
+    color: #1f2937;
+    padding: 12px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.public-header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.public-header .logo {
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.auth-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* User Dropdown */
+.user-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.user-trigger {
+    background: none;
+    border: none;
+    color: #1f2937;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 6px 10px;
+}
+
+    .user-trigger:focus {
+        outline: none;
+    }
+
+.user-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 120%;
+    background: #ffffff;
+    border-radius: 6px;
+    min-width: 200px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    overflow: hidden;
+    z-index: 1000;
+    border: 1px solid #e5e7eb;
+}
+
+.user-menu.open .user-dropdown {
+    display: block;
+}
+
+.user-dropdown a, .user-dropdown .logout-btn {
+    display: block;
+    width: 100%;
+    padding: 10px 14px;
+    background: none;
+    border: none;
+    text-decoration: none;
+    color: #1f2937;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+    .user-dropdown a:hover, .user-dropdown .logout-btn:hover {
+        background: #f1f5f9;
+    }
+
+/* Manage & Logout Pages */
+.manage-nav {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.manage-link {
+    padding: 8px 14px;
+    border-radius: 6px;
+    background: #e5e7eb;
+    text-decoration: none;
+    color: #1f2937;
+    font-weight: 500;
+}
+
+    .manage-link:hover {
+        background: #2563eb;
+        color: #fff;
+    }
+
+    .manage-link.active {
+        background: #1e293b;
+        color: #fff;
+    }
+
+.logout-page {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.logout-card {
+    width: 100%;
+    max-width: 520px;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 32px;
+    border: 1px solid #e5e7eb;
+    text-align: center;
+}
+
+.logout-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 16px;
+    font-weight: bold;
+}
+
+    .logout-icon.danger {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .logout-icon.success {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+
+.logout-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.logout-footer {
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+    font-size: 13px;
+    color: #64748b;
+}
+
+/* ================================================================== 
+   2. PAGE SPECIFIC CUSTOM STYLES (TEST SUITES & OTHERS)
+   (Phần này thêm vào để hỗ trợ view Test Suites đẹp hơn)
+   ================================================================== */
+
+.page-header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.page-title h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #1f2937;
+}
+
+.page-title strong {
+    color: #2563eb;
+}
+
+/* Custom Buttons cho trang list */
+.btn-custom {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px; /* Chỉnh lại padding cho đẹp hơn */
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600; /* Chữ đậm hơn chút */
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    margin: 4px; /* Cách nhau ra một chút */
+}
+
+.btn-create {
+    background-color: #2563eb;
+    color: white;
+}
+
+    .btn-create:hover {
+        background-color: #1d4ed8;
+    }
+
+.btn-back {
+    background-color: transparent;
+    border-color: #cbd5e1;
+    color: #475569;
+}
+
+    .btn-back:hover {
+        background-color: #f1f5f9;
+        border-color: #94a3b8;
+    }
+.btn-detail {
+    background-color: #0ea5e9;
+    color: white !important;
+}
+
+    .btn-detail:hover {
+        background-color: #0284c7;
+    }
+
+/* 2. Nút Sửa (Màu vàng - Chữ đen cho dễ đọc) */
+.btn-edit {
+    background-color: #eab308;
+    color: black !important;
+}
+
+    .btn-edit:hover {
+        background-color: #ca8a04;
+    }
+
+/* 3. Nút Xóa (Màu đỏ) */
+.btn-delete {
+    background-color: #ef4444;
+    color: white !important;
+}
+
+    .btn-delete:hover {
+        background-color: #dc2626;
+    }
+/* Custom Table cho trang list */
+.table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1px solid #e5e7eb;
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+}
+
+    .custom-table th, .custom-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .custom-table th {
+        background-color: #f8fafc;
+        color: #475569;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+    }
+
+    .custom-table tbody tr:hover {
+        background-color: #f8fafc;
+    }
+
+/* Alert Box Custom */
+.alert-box {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    background-color: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-close-alert {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+    .btn-close-alert:hover {
+        opacity: 1;
+    }
+/* Nút Run (Chạy Test) */
+.btn-run {
+    background-color: #16a34a; /* Xanh lá */
+    color: white !important;
+}
+
+    .btn-run:hover {
+        background-color: #15803d;
+    }
+
+/* Đảm bảo Dark mode cũng đẹp */
+[data-theme="dark"] .btn-run {
+    background-color: #16a34a !important;
+    color: white !important;
+}
+
+    [data-theme="dark"] .btn-run:hover {
+        background-color: #15803d !important;
+    }
+/* ================= DETAILS PAGE LAYOUT (Mới) ================= */
+
+/* Layout chia 2 cột */
+.details-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* Cột trái rộng gấp đôi cột phải */
+    gap: 24px;
+}
+
+@media (max-width: 768px) {
+    .details-layout {
+        grid-template-columns: 1fr; /* Mobile thì xếp chồng lên nhau */
+    }
+}
+
+/* Các khối nội dung (Box) */
+.content-box {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.box-title {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1f2937;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 10px;
+}
+
+/* Lưới thông tin (Info Grid) */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+    .info-item .label {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin-bottom: 4px;
+        font-weight: 500;
+    }
+
+    .info-item .value {
+        font-weight: 500;
+    }
+
+.description-block {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #f1f5f9;
+}
+
+    .description-block .label {
+        display: block;
+        font-size: 0.85rem;
+        color: #64748b;
+        margin-bottom: 4px;
+        font-weight: 500;
+    }
+
+/* Sidebar Styling */
+.sidebar-box {
+    padding: 16px;
+}
+
+.action-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.w-100 {
+    width: 100%;
+    justify-content: center;
+}
+
+/* List lịch sử nhỏ bên phải */
+.history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+    .history-item:last-child {
+        border-bottom: none;
+    }
+
+    .history-item .date {
+        font-size: 0.85rem;
+        color: #666;
+    }
+
+.empty-state-small {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    padding: 20px;
+}
+
+/* ================= DARK MODE DETAILS ================= */
+[data-theme="dark"] .content-box {
+    background-color: #1e293b;
+    border-color: #334155;
+}
+
+[data-theme="dark"] .box-title {
+    color: #fff;
+    border-bottom-color: #334155;
+}
+
+[data-theme="dark"] .info-item .label,
+[data-theme="dark"] .description-block .label {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .description-block,
+[data-theme="dark"] .history-item {
+    border-color: #334155;
+}
+
+    [data-theme="dark"] .history-item .date {
+        color: #94a3b8;
+    }
+/* ================================================================== 
+   3. DARK MODE OVERRIDES (GLOBAL & CUSTOM)
+   ================================================================== */
+
+/* --- A. GLOBAL ELEMENTS --- */
+[data-theme="dark"] body,
+[data-theme="dark"] .main-content {
+    background-color: #0f172a !important; /* Nền tối sẫm */
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .sidebar,
+[data-theme="dark"] .page-header,
+[data-theme="dark"] .card,
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .footer,
+[data-theme="dark"] .logout-card,
+[data-theme="dark"] .public-header,
+[data-theme="dark"] .dropdown-menu,
+[data-theme="dark"] .user-dropdown {
+    background-color: #1e293b !important; /* Nền xanh đen */
+    color: #e2e8f0 !important;
+    border-color: #334155 !important;
+}
+
+[data-theme="dark"] .sidebar-header {
+    border-bottom-color: #334155 !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .sidebar-item {
+    color: #cbd5e1 !important;
+}
+
+    [data-theme="dark"] .sidebar-item:hover,
+    [data-theme="dark"] .sidebar-item:focus {
+        background-color: #334155 !important;
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .sidebar-item.active {
+        background-color: #172554 !important;
+        color: #60a5fa !important;
+        border-right-color: #60a5fa !important;
+    }
+
+[data-theme="dark"] thead {
+    background-color: #334155 !important;
+    color: #ffffff !important;
+    border-bottom-color: #475569 !important;
+}
+
+[data-theme="dark"] th, [data-theme="dark"] td {
+    border-bottom-color: #334155 !important;
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] tbody tr:hover {
+    background-color: #334155 !important;
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+    background-color: #1e293b !important;
+    border-color: #475569 !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .btn-outline {
+    border-color: #475569 !important;
+    color: #e2e8f0 !important;
+}
+
+    [data-theme="dark"] .btn-outline:hover {
+        background-color: #334155 !important;
+        color: #ffffff !important;
+    }
+
+[data-theme="dark"] .user-trigger {
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .dropdown-menu a {
+    color: #cbd5e1 !important;
+}
+
+    [data-theme="dark"] .dropdown-menu a:hover {
+        background-color: #334155 !important;
+        color: #ffffff !important;
+    }
+
+[data-theme="dark"] .badge.none,
+[data-theme="dark"] .badge.draft {
+    background-color: #334155 !important;
+    color: #e2e8f0 !important;
+    border-color: #475569 !important;
+}
+
+/* --- B. CUSTOM PAGE ELEMENTS (Test Suites) --- */
+[data-theme="dark"] .page-title h2 {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .btn-back {
+    color: #e2e8f0;
+    border-color: #555;
+}
+
+    [data-theme="dark"] .btn-back:hover {
+        background-color: rgba(255,255,255,0.1);
+    }
+
+[data-theme="dark"] .custom-table {
+    background-color: #1e293b;
+    color: #e2e8f0;
+}
+
+    [data-theme="dark"] .custom-table th {
+        background-color: #334155;
+        color: #fff;
+        border-bottom: 1px solid #475569;
+    }
+
+    [data-theme="dark"] .custom-table td {
+        border-bottom: 1px solid #475569;
+    }
+
+    [data-theme="dark"] .custom-table tbody tr:hover {
+        background-color: #334155;
+    }
+
+[data-theme="dark"] .table-container {
+    border: 1px solid #334155;
+    box-shadow: none;
+}
+
+[data-theme="dark"] .empty-state {
+    background-color: #1e293b;
+    color: #aaa;
+}
+
+[data-theme="dark"] .alert-box {
+    background-color: #1e4620;
+    color: #dcfce7;
+    border-color: #166534;
+}
+/* ================= ALERT DANGER (Dùng cho trang xóa) ================= */
+.alert-box.danger {
+    background-color: #fef2f2;
+    color: #991b1b;
+    border-color: #fecaca;
+}
+
+[data-theme="dark"] .alert-box.danger {
+    background-color: #450a0a !important; /* Đỏ rất tối */
+    color: #fca5a5 !important; /* Chữ đỏ sáng */
+    border-color: #7f1d1d !important;
+}
+
+/* Chỉnh lại action group cho đẹp */
+.action-group {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+/* ================= FORM STYLES (Dùng cho trang Create/Edit) ================= */
+
+/* Lưới Form 2 cột */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.form-group {
+    margin-bottom: 5px;
+}
+
+/* Label */
+.form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #374151;
+}
+
+    .form-label.required::after {
+        content: " *";
+        color: #dc2626;
+    }
+
+/* Input Fields (Thay thế form-control) */
+.form-input {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #1f2937;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+    .form-input:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+.form-hint {
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-top: 4px;
+    display: block;
+}
+
+/* Style riêng cho phần Test Steps */
+.step-item {
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.step-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.step-badge {
+    background-color: #e5e7eb;
+    color: #374151;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.btn-close-step {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    font-size: 1.2rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+    .btn-close-step:hover {
+        color: #dc2626;
+    }
+
+/* ================= DARK MODE FORMS ================= */
+[data-theme="dark"] .form-label {
+    color: #e5e7eb;
+}
+
+[data-theme="dark"] .form-input {
+    background-color: #1f2937; /* Nền input tối */
+    border-color: #4b5563;
+    color: #f3f4f6; /* Chữ trắng */
+}
+
+    [data-theme="dark"] .form-input:focus {
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+    }
+
+[data-theme="dark"] .form-hint {
+    color: #9ca3af;
+}
+
+[data-theme="dark"] .step-item {
+    background-color: #111827; /* Nền step tối hơn */
+    border-color: #374151;
+}
+
+[data-theme="dark"] .step-badge {
+    background-color: #374151;
+    color: #e5e7eb;
+}
+/* ================= BOX MÀU SẮC (Dùng cho trang Execution Details) ================= */
+
+/* Box Xám (Actual Result) */
+.box-gray {
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    color: #1f2937;
+    padding: 15px;
+    border-radius: 6px;
+    margin-top: 8px;
+    white-space: pre-wrap;
+}
+
+/* Box Vàng (Note/Bug) */
+.box-yellow {
+    background-color: #fffbeb;
+    border: 1px solid #fcd34d;
+    color: #92400e;
+    padding: 15px;
+    border-radius: 6px;
+    margin-top: 8px;
+    white-space: pre-wrap;
+}
+
+/* --- DARK MODE CHO CÁC BOX NÀY --- */
+[data-theme="dark"] .box-gray {
+    background-color: #1f2937; /* Nền tối */
+    border-color: #374151;
+    color: #e5e7eb;
+}
+
+[data-theme="dark"] .box-yellow {
+    background-color: #451a03; /* Nền nâu tối */
+    border-color: #92400e;
+    color: #fcd34d; /* Chữ vàng sáng */
+}
+/* ================= BADGE SỐ LƯỢNG (Dùng chung) ================= */
+.badge-count {
+    background-color: #e0e7ff;
+    color: #3730a3;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+[data-theme="dark"] .badge-count {
+    background-color: #312e81; /* Xanh tím tối */
+    color: #c7d2fe; /* Chữ sáng */
+}
+/* ================================================================== 
+   3. DARK MODE OVERRIDES (ĐÃ FIX LỖI KHÓ NHÌN)
+   ================================================================== */
+
+/* --- A. GLOBAL ELEMENTS (NỀN & CHỮ) --- */
+[data-theme="dark"] body,
+[data-theme="dark"] .main-content {
+    background-color: #0f172a !important; /* Nền xanh đen đậm */
+    color: #f1f5f9 !important; /* Chữ trắng sáng */
+}
+
+/* Các khối chính: Sidebar, Header, Card... */
+[data-theme="dark"] .sidebar,
+[data-theme="dark"] .page-header,
+[data-theme="dark"] .card,
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .footer,
+[data-theme="dark"] .logout-card,
+[data-theme="dark"] .public-header,
+[data-theme="dark"] .dropdown-menu,
+[data-theme="dark"] .user-dropdown {
+    background-color: #1e293b !important; /* Nền các khối sáng hơn nền web 1 chút */
+    color: #f1f5f9 !important;
+    border-color: #334155 !important;
+}
+
+/* Sidebar Menu */
+[data-theme="dark"] .sidebar-header {
+    border-bottom-color: #334155 !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .sidebar-item {
+    color: #cbd5e1 !important;
+}
+
+    [data-theme="dark"] .sidebar-item:hover,
+    [data-theme="dark"] .sidebar-item:focus {
+        background-color: #334155 !important;
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .sidebar-item.active {
+        background-color: #1d4ed8 !important; /* Xanh dương đậm hơn chút cho dịu mắt */
+        color: #ffffff !important;
+        border-right-color: #60a5fa !important;
+    }
+
+/* --- B. TABLE & BUTTONS (PHẦN QUAN TRỌNG ĐỂ FIX ẢNH BẠN GỬI) --- */
+
+/* 1. Xử lý Bảng (Table) */
+[data-theme="dark"] .custom-table {
+    background-color: #1e293b !important;
+    color: #e2e8f0 !important;
+}
+
+    [data-theme="dark"] .custom-table th {
+        background-color: #0f172a !important; /* Header bảng tối hơn */
+        color: #94a3b8 !important; /* Chữ header màu xám sáng */
+        border-bottom: 1px solid #475569 !important;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }
+
+    [data-theme="dark"] .custom-table td {
+        border-bottom: 1px solid #334155 !important;
+        vertical-align: middle;
+    }
+
+    /* Hiệu ứng hover dòng: Sáng lên chút để dễ nhìn */
+    [data-theme="dark"] .custom-table tbody tr:hover {
+        background-color: #334155 !important;
+    }
+
+[data-theme="dark"] .table-container {
+    border: 1px solid #334155;
+    box-shadow: none;
+}
+
+/* 2. Xử lý Nút Bấm (FIX LỖI CHỮ TÍM/TỐI) */
+/* Ép tất cả nút custom trong dark mode phải có chữ trắng */
+[data-theme="dark"] .btn-custom {
+    color: #ffffff !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+/* Nút Chi tiết (Xanh Cyan) */
+[data-theme="dark"] .btn-detail {
+    background-color: #0ea5e9 !important; /* Xanh sáng hơn */
+    color: #ffffff !important;
+}
+
+    [data-theme="dark"] .btn-detail:hover {
+        background-color: #0284c7 !important;
+    }
+
+/* Nút Sửa (Vàng) */
+[data-theme="dark"] .btn-edit {
+    background-color: #eab308 !important; /* Vàng đậm hơn để đỡ chói nhưng vẫn rõ */
+    color: #000000 !important; /* Chữ đen trên nền vàng mới đọc được */
+}
+
+    [data-theme="dark"] .btn-edit:hover {
+        background-color: #ca8a04 !important;
+    }
+
+/* Nút Xóa (Đỏ) */
+[data-theme="dark"] .btn-delete {
+    background-color: #ef4444 !important; /* Đỏ tươi */
+    color: #ffffff !important;
+}
+
+    [data-theme="dark"] .btn-delete:hover {
+        background-color: #dc2626 !important;
+    }
+
+/* Nút Quay lại (Back) */
+[data-theme="dark"] .btn-back {
+    color: #e2e8f0 !important;
+    border-color: #64748b !important;
+    background-color: transparent !important;
+}
+
+    [data-theme="dark"] .btn-back:hover {
+        background-color: #334155 !important;
+        color: #ffffff !important;
+    }
+
+/* --- C. FORM ELEMENTS & ALERTS --- */
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+    background-color: #0f172a !important; /* Nền input tối */
+    border-color: #475569 !important;
+    color: #ffffff !important;
+}
+
+    [data-theme="dark"] input:focus {
+        border-color: #38bdf8 !important; /* Viền focus xanh sáng */
+        outline: none;
+    }
+
+[data-theme="dark"] .alert-box {
+    background-color: #064e3b !important; /* Xanh lá rất tối */
+    color: #6ee7b7 !important; /* Chữ xanh lá sáng */
+    border-color: #059669 !important;
+}
+
+[data-theme="dark"] .page-title h2 {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .page-title strong {
+    color: #38bdf8 !important;
+}
+/* ================= LAYOUT CANH GIỮA (Dùng cho các form Create/Edit) ================= */
+.container-center {
+    max-width: 1200px; /* Giới hạn chiều rộng để form không bị bè ra quá dài */
+    margin-left: auto; /* Tự động đẩy lề trái */
+    margin-right: auto; /* Tự động đẩy lề phải -> Kết quả là nằm giữa */
+    width: 100%;
 }

@@ -4,9 +4,12 @@ using WebsiteQL_Testcase.Data;
 using WebsiteQL_Testcase.Models;
 using WebsiteQL_Testcase.Models.Enums;
 using WebsiteQL_Testcase.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace WebsiteQL_Testcase.Controllers
 {
+    [Authorize]
     public class DashboardController : Controller
     {
         private readonly ApplicationDbContext _context;

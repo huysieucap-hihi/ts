@@ -25,6 +25,14 @@ namespace WebsiteQL_Testcase.Data
             // Apply tất cả configurations từ assembly
             modelBuilder.ApplyConfigurationsFromAssembly(
                 typeof(ApplicationDbContext).Assembly);
+
+            // --- CẤU HÌNH XÓA CASCADE (SỬA LỖI) ---
+            // Khi xóa TestCase -> Tự động xóa các TestExecution liên quan
+            modelBuilder.Entity<TestExecution>()
+                .HasOne(te => te.TestCase)
+                .WithMany(tc => tc.Executions) // Đã sửa tên thành Executions cho khớp với Model
+                .HasForeignKey(te => te.TestCaseId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

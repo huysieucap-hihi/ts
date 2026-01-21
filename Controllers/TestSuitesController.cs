@@ -109,28 +109,36 @@ namespace WebsiteQL_Testcase.Controllers
         // POST: TestSuites/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Description,ProjectId")] TestSuite testSuite)
+        public async Task<IActionResult> Edit(TestSuite model)
         {
-            if (id != testSuite.Id) return NotFound();
+            Console.WriteLine("EDIT POST HIT");
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(testSuite);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TestSuiteExists(testSuite.Id))
-                        return NotFound();
-                    throw;
-                }
-                TempData["Success"] = "Cập nhật Test Suite thành công!";
-                return RedirectToAction(nameof(Index), new { projectId = testSuite.ProjectId });
+                return View(model);
             }
-            return View(testSuite);
+
+            // LẤY ENTITY ĐANG TRACKING TỪ DB
+            var suite = await _context.TestSuites
+                .FirstOrDefaultAsync(x => x.Id == model.Id);
+
+            if (suite == null)
+            {
+                return NotFound();
+            }
+
+            // CẬP NHẬT FIELD CẦN THAY ĐỔI
+            suite.Name = model.Name;
+            suite.Description = model.Description;
+
+            // LƯU DB
+            await _context.SaveChangesAsync(); // 👈 DÒNG QUYẾT ĐỊNH
+
+            TempData["Success"] = "Cập nhật Test Suite thành công!";
+
+            return RedirectToAction(nameof(Index), new { projectId = model.ProjectId });
         }
+
 
         // GET: TestSuites/Delete/5
         public async Task<IActionResult> Delete(Guid? id)

@@ -2,12 +2,33 @@
 
 @{
     ViewData["Title"] = "Sửa Test Case";
-    var testSuiteName = ViewData["TestSuiteName"] as string;
-    var projectName = ViewData["ProjectName"] as string;
+    var testSuiteName = Model.TestSuite?.Name;
+    var projectName = Model.TestSuite?.Project?.Name;
 }
 
-<h2 class="mb-4">@ViewData["Title"]: @Model.Code - @Model.Title</h2>
-<p><strong>Test Suite:</strong> @testSuiteName | <strong>Project:</strong> @projectName</p>
+<div class="page-header-container">
+    <div class="page-title">
+        <h2>Sửa Test Case: <strong>@Model.Code</strong></h2>
+        <div style="font-size: 0.95rem; color: #666; margin-top: 8px;">
+            Project: <strong>@projectName</strong> | Suite: <strong>@testSuiteName</strong>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.ModelStateErrors != null)
+{
+    <div class="alert-box danger" style="margin-bottom: 20px;">
+        <div>
+            <strong>Lỗi Validation:</strong>
+            <ul style="margin: 5px 0 0 20px; padding: 0;">
+                @foreach (var error in ViewBag.ModelStateErrors as Dictionary<string, string[]>)
+                {
+                    <li>@error.Key: @string.Join(", ", error.Value)</li>
+                }
+            </ul>
+        </div>
+    </div>
+}
 
 <form asp-action="Edit" method="post">
     <input type="hidden" asp-for="Id" />
@@ -16,105 +37,102 @@
 
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label asp-for="Code" class="form-label fw-bold"></label>
-                <input asp-for="Code" class="form-control" readonly />
+    @* --- PHẦN 1: THÔNG TIN CHUNG --- *@
+    <div class="content-box">
+        <h4 class="box-title">Thông tin chung</h4>
+        <div class="form-grid">
+            <div class="form-group">
+                <label asp-for="Code" class="form-label required">Mã Test Case</label>
+                <input asp-for="Code" class="form-input" placeholder="VD: TC_LOGIN_001" required />
                 <span asp-validation-for="Code" class="text-danger"></span>
             </div>
-
-            <div class="mb-3">
-                <label asp-for="Title" class="form-label fw-bold"></label>
-                <input asp-for="Title" class="form-control" required />
+            <div class="form-group">
+                <label asp-for="Title" class="form-label required">Tiêu đề</label>
+                <input asp-for="Title" class="form-input" placeholder="Nhập tiêu đề ngắn gọn" required />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
-
-            <div class="mb-3">
-                <label asp-for="Priority" class="form-label fw-bold"></label>
-                <select asp-for="Priority" class="form-select">
-                    <option value="">Chọn độ ưu tiên</option>
+            <div class="form-group">
+                <label asp-for="Priority" class="form-label">Độ ưu tiên</label>
+                <select asp-for="Priority" class="form-input">
                     <option value="1">Low</option>
                     <option value="2">Medium</option>
                     <option value="3">High</option>
                     <option value="4">Critical</option>
                 </select>
+                <span asp-validation-for="Priority" class="text-danger"></span>
             </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label asp-for="Status" class="form-label fw-bold"></label>
-                <select asp-for="Status" class="form-select">
+            <div class="form-group">
+                <label asp-for="Status" class="form-label">Trạng thái</label>
+                <select asp-for="Status" class="form-input">
                     <option value="1">Draft</option>
                     <option value="2">Active</option>
                     <option value="3">Inactive</option>
                 </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
             </div>
-
-            <div class="mb-3">
-                <label asp-for="Description" class="form-label fw-bold"></label>
-                <textarea asp-for="Description" class="form-control" rows="6"></textarea>
-            </div>
+        </div>
+        <div class="form-group" style="margin-top: 15px;">
+            <label asp-for="Description" class="form-label">Mô tả chi tiết</label>
+            <textarea asp-for="Description" class="form-input" rows="4"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
         </div>
     </div>
 
-    <!-- Test Steps (load existing steps) -->
-    <div class="card mt-4">
-        <div class="card-header">
-            <h5 class="card-title mb-0">
-                <i class="bi bi-list-ol"></i> Test Steps (@Model.Steps.Count step(s))
-                <button type="button" class="btn btn-sm btn-outline-primary float-end" onclick="addStep()">
-                    <i class="bi bi-plus"></i> Thêm Step
-                </button>
-            </h5>
+    @* --- PHẦN 2: TEST STEPS --- *@
+    <div class="content-box">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+            <h4 class="box-title" style="margin: 0; border: none;">Test Steps</h4>
+
+            @* ID btnAddStep dùng để JS bắt sự kiện *@
+            <button type="button" id="btnAddStep" class="btn-custom btn-create" style="font-size: 0.9rem; padding: 6px 12px;">
+                + Thêm Step
+            </button>
         </div>
-        <div class="card-body">
-            <div id="steps-container">
-                @for (int i = 0; i < Model.Steps.Count; i++)
+
+        @* Data-step-count: Truyền số lượng step hiện tại sang JS *@
+        <div id="steps-container" data-step-count="@(Model.Steps?.Count ?? 0)">
+
+            @if (Model.Steps != null && Model.Steps.Any())
+            {
+                var sortedSteps = Model.Steps.OrderBy(s => s.StepNumber).ToList();
+                for (int i = 0; i < sortedSteps.Count; i++)
                 {
-                    var step = Model.Steps.ElementAt(i);
-                    <div class="step-row mb-3" data-step="@(i + 1)">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Action (Step @(i + 1))</label>
-                                <textarea name="Actions[@i]" class="form-control" rows="2" required>@step.Action</textarea>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Expected Result</label>
-                                <textarea name="ExpectedResults[@i]" class="form-control" rows="2">@step.ExpectedResult</textarea>
-                            </div>
+                    <div class="step-item" data-step="@(i + 1)">
+                        <div class="step-header">
+                            <span class="step-badge">Step @(i + 1)</span>
+                            @* Class btn-close-step dùng để JS bắt sự kiện xóa *@
+                            <button type="button" class="btn-close-step" title="Xóa step này">×</button>
                         </div>
-                        <div class="mt-2">
-                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeStep(this)">Xóa Step</button>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Hành động (Action)</label>
+                                <textarea name="Actions[@i]" class="form-input" rows="2" required>@sortedSteps[i].Action</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Kết quả mong đợi (Expected)</label>
+                                <textarea name="ExpectedResults[@i]" class="form-input" rows="2">@sortedSteps[i].ExpectedResult</textarea>
+                            </div>
                         </div>
                     </div>
                 }
-                @if (!Model.Steps.Any())
-                {
-                    <div class="step-row mb-3" data-step="1">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Action</label>
-                                <textarea name="Actions[0]" class="form-control" rows="2" placeholder="Hành động thực hiện" required></textarea>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Expected Result</label>
-                                <textarea name="ExpectedResults[0]" class="form-control" rows="2" placeholder="Kết quả mong đợi"></textarea>
-                            </div>
-                        </div>
-                        <div class="mt-2">
-                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeStep(this)">Xóa Step</button>
-                        </div>
-                    </div>
-                }
-            </div>
+            }
+            else
+            {
+                <div style="padding: 20px; text-align: center; color: #888; font-style: italic;" id="no-steps-msg">
+                    Chưa có bước kiểm thử nào. Bấm "Thêm Step" để bắt đầu.
+                </div>
+            }
         </div>
     </div>
 
-    <div class="mt-4 d-flex gap-2">
-        <button type="submit" class="btn btn-warning">Cập nhật Test Case</button>
-        <a asp-action="Index" asp-route-testSuiteId="@Model.TestSuiteId" class="btn btn-secondary">Quay lại</a>
+    @* BUTTONS *@
+    <div class="action-group" style="margin-top: 20px;">
+        <button type="submit" class="btn-custom btn-create" style="padding: 10px 25px; font-size: 1rem;">
+            Lưu Thay Đổi
+        </button>
+        <a asp-action="Index" asp-route-testSuiteId="@Model.TestSuiteId" class="btn-custom btn-back" style="padding: 10px 25px; font-size: 1rem;">
+            Hủy bỏ
+        </a>
     </div>
 </form>
 
@@ -122,47 +140,5 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
-    <script>
-        let stepCounter = @Model.Steps.Count;
-
-        function addStep() {
-            stepCounter++;
-            const container = document.getElementById('steps-container');
-            const newStep = document.createElement('div');
-            newStep.className = 'step-row mb-3';
-            newStep.dataset.step = stepCounter;
-            newStep.innerHTML = `
-                <div class="row">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Action (Step ${stepCounter})</label>
-                        <textarea name="Actions[${stepCounter - 1}]" class="form-control" rows="2" placeholder="Hành động thực hiện" required></textarea>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Expected Result</label>
-                        <textarea name="ExpectedResults[${stepCounter - 1}]" class="form-control" rows="2" placeholder="Kết quả mong đợi"></textarea>
-                    </div>
-                </div>
-                <div class="mt-2">
-                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeStep(this)">Xóa Step</button>
-                </div>
-            `;
-            container.appendChild(newStep);
-        }
-
-        function removeStep(button) {
-            const stepRow = button.closest('.step-row');
-            stepRow.remove();
-            // Re-index remaining steps
-            const steps = document.querySelectorAll('.step-row');
-            steps.forEach((step, index) => {
-                step.dataset.step = index + 1;
-                const action = step.querySelector('textarea[name^="Actions"]');
-                const expected = step.querySelector('textarea[name^="ExpectedResults"]');
-                if (action) action.name = `Actions[${index}]`;
-                if (expected) expected.name = `ExpectedResults[${index}]`;
-            });
-            stepCounter = steps.length;
-        }
-    </script>
+    @* Không còn thẻ <script> ở đây nữa *@
 }

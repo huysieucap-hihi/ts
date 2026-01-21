@@ -2,48 +2,89 @@
 
 @{
     ViewData["Title"] = "Chi tiết Execution";
+    var userRun = Model.ExecutedBy?.FullName ?? Model.ExecutedBy?.UserName ?? "Hệ thống";
 }
 
-<h3>
-    Execution Result:
-    <span class="badge fs-4 @(Model.Result == WebsiteQL_Testcase.Models.Enums.TestResult.Pass ? "bg-success" :
-                                        Model.Result == WebsiteQL_Testcase.Models.Enums.TestResult.Fail ? "bg-danger" :
-                                        Model.Result == WebsiteQL_Testcase.Models.Enums.TestResult.Pending ? "bg-warning" : "bg-secondary")">
-        @Model.Result
-    </span>
-</h3>
-
-<p class="text-muted">
-    Test Case: <strong>@Model.TestCase.Code - @Model.TestCase.Title</strong><br />
-    Thực hiện lúc: @Model.ExecutedAt.ToString("dd/MM/yyyy HH:mm")
-    @(Model.ExecutedBy != null ? $"bởi {Model.ExecutedBy.FullName ?? Model.ExecutedBy.UserName}" : "")
-</p>
-
-<div class="row">
-    <div class="col-md-6">
-        <div class="card mb-3">
-            <div class="card-header">Actual Result</div>
-            <div class="card-body">
-                <p class="preserve-whitespace">@(string.IsNullOrWhiteSpace(Model.ActualResult) ? "Không có mô tả" : Model.ActualResult)</p>
-            </div>
+@* HEADER & ACTIONS *@
+<div class="page-header-container">
+    <div class="page-title">
+        <h2>Execution: <strong>@Model.TestCase.Code</strong></h2>
+        <div style="font-size: 0.95rem; color: #666; margin-top: 8px;">
+            Test Case: <strong>@Model.TestCase.Title</strong>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card mb-3">
-            <div class="card-header">Note / Bug</div>
-            <div class="card-body">
-                <p class="preserve-whitespace">@(string.IsNullOrWhiteSpace(Model.Note) ? "Không có ghi chú" : Model.Note)</p>
-            </div>
-        </div>
+
+    <div class="page-actions">
+        <a asp-controller="TestCases" asp-action="Details" asp-route-id="@Model.TestCaseId" class="btn-custom btn-back">
+            ← Quay lại Test Case
+        </a>
     </div>
 </div>
 
-<a asp-controller="TestCases" asp-action="Details" asp-route-id="@Model.TestCaseId" class="btn btn-secondary">
-    ← Quay lại Test Case
-</a>
+@* LAYOUT 2 CỘT *@
+<div class="details-layout">
 
-<style>
-    .preserve-whitespace {
-        white-space: pre-wrap;
-    }
-</style>
+    @* --- CỘT TRÁI: NỘI DUNG CHI TIẾT --- *@
+    <div class="details-main">
+        <div class="content-box">
+            <h4 class="box-title">Thông tin thực thi</h4>
+
+            @* Actual Result *@
+            <div class="description-block" style="margin-top: 0; border-top: none;">
+                <span class="label" style="font-size: 1rem; color: #374151;">Actual Result (Kết quả thực tế):</span>
+
+                @* Dùng class .box-gray thay cho style inline *@
+                <div class="box-gray">
+                    @(string.IsNullOrWhiteSpace(Model.ActualResult) ? "Không có mô tả chi tiết." : Model.ActualResult)
+                </div>
+            </div>
+
+            @* Note / Bug *@
+            <div class="description-block">
+                <span class="label" style="font-size: 1rem; color: #374151;">Note / Bug Link:</span>
+
+                @* Dùng class .box-yellow thay cho style inline *@
+                <div class="box-yellow">
+                    @(string.IsNullOrWhiteSpace(Model.Note) ? "Không có ghi chú." : Model.Note)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* --- CỘT PHẢI: KẾT QUẢ & METADATA --- *@
+    <div class="details-sidebar">
+
+        @* Kết quả *@
+        <div class="content-box sidebar-box" style="text-align: center;">
+            <h4 class="box-title">Kết quả</h4>
+            <div style="padding: 10px 0 20px 0;">
+                <span class="badge @Model.Result.ToString().ToLower()" style="font-size: 1.5rem; padding: 10px 25px;">
+                    @Model.Result
+                </span>
+            </div>
+        </div>
+
+        @* Thông tin Metadata *@
+        <div class="content-box sidebar-box">
+            <h4 class="box-title">Thông tin chạy</h4>
+            <div class="info-grid" style="grid-template-columns: 1fr; gap: 12px;">
+
+                <div class="info-item">
+                    <span class="label">Thời gian thực hiện:</span>
+                    <span class="value" style="font-weight: bold;">@Model.ExecutedAt.ToString("dd/MM/yyyy")</span>
+                    <small style="color: #666;">lúc @Model.ExecutedAt.ToString("HH:mm:ss")</small>
+                </div>
+
+                <div class="info-item" style="border-top: 1px solid #eee; padding-top: 10px;">
+                    <span class="label">Người thực hiện:</span>
+                    <span class="value">
+                        <i class="fa-solid fa-user" style="color: #666; margin-right: 5px;"></i>
+                        @userRun
+                    </span>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

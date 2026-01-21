@@ -4,29 +4,66 @@
     ViewData["Title"] = "Chi tiết Project";
 }
 
-<h2 class="mb-4">@ViewData["Title"]: @Model.Name</h2>
+@* BỌC TOÀN BỘ TRONG CONTAINER-CENTER *@
+<div class="container-center">
 
-<div class="card">
-    <div class="card-body">
-        <dl class="row">
-            <dt class="col-sm-3 fw-bold">Tên Project</dt>
-            <dd class="col-sm-9">@Model.Name</dd>
+    @* HEADER & ACTIONS *@
+    <div class="page-header-container">
+        <div class="page-title">
+            <h2>Project: <strong>@Model.Name</strong></h2>
+        </div>
 
-            <dt class="col-sm-3 fw-bold">Mô tả</dt>
-            <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.Description) ? "-" : Model.Description)</dd>
+        <div class="page-actions">
+            <a asp-action="Index" class="btn-custom btn-back">
+                ← Quay lại danh sách
+            </a>
 
-            <dt class="col-sm-3 fw-bold">Ngày tạo</dt>
-            <dd class="col-sm-9">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</dd>
+            @* Nút tắt để nhảy vào xem danh sách Suite của dự án này *@
+            <a asp-controller="TestSuites" asp-action="Index" asp-route-projectId="@Model.Id" class="btn-custom btn-detail">
+                Xem Test Suites
+            </a>
 
-            <dt class="col-sm-3 fw-bold">Cập nhật lần cuối</dt>
-            <dd class="col-sm-9">@(Model.UpdatedAt?.ToString("dd/MM/yyyy HH:mm") ?? "-")</dd>
-
-            <dt class="col-sm-3 fw-bold">Số Test Suite</dt>
-            <dd class="col-sm-9">@Model.TestSuites.Count</dd>
-        </dl>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-custom btn-edit">
+                Sửa Project
+            </a>
+        </div>
     </div>
-    <div class="card-footer text-end">
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Sửa</a>
-        <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+
+    @* NỘI DUNG CHI TIẾT *@
+    <div class="content-box" style="max-width: 900px;">
+        <h4 class="box-title">Thông tin chi tiết</h4>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="label">Tên Project:</span>
+                <span class="value" style="font-weight: bold; font-size: 1.05rem;">@Model.Name</span>
+            </div>
+
+            <div class="info-item">
+                <span class="label">Số lượng Test Suite:</span>
+                <span class="value">
+                    <span style="background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.9rem;">
+                        @(Model.TestSuites?.Count ?? 0) suites
+                    </span>
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="label">Ngày tạo:</span>
+                <span class="value">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+            </div>
+
+            <div class="info-item">
+                <span class="label">Cập nhật lần cuối:</span>
+                <span class="value">@(Model.UpdatedAt?.ToString("dd/MM/yyyy HH:mm") ?? "-")</span>
+            </div>
+        </div>
+
+        @* Phần mô tả tách riêng cho dễ đọc *@
+        <div class="description-block">
+            <span class="label">Mô tả dự án:</span>
+            <p style="white-space: pre-wrap; margin-top: 5px; line-height: 1.6;">@(string.IsNullOrEmpty(Model.Description) ? "Không có mô tả" : Model.Description)</p>
+        </div>
     </div>
+
 </div>

@@ -2,50 +2,44 @@
 @inject SignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
 
-<ul class="navbar-nav">
-    @if (SignInManager.IsSignedIn(User))
-    {
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle text-light d-flex align-items-center"
-               href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-person-circle fs-4 me-2"></i>
-                <span class="d-none d-md-inline">
-                    @{
-                        var currentUser = await UserManager.GetUserAsync(User);
-                        var displayName = currentUser?.FullName ?? User.Identity?.Name ?? "User";
-                    }
-                    @displayName
-                </span>
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="user-menu" id="userMenu">
+        <button type="button" class="user-trigger" id="userTrigger">
+            @{
+                var currentUser = await UserManager.GetUserAsync(User);
+                var displayName = currentUser?.FullName ?? User.Identity?.Name ?? "User";
+            }
+            @displayName
+        </button>
+
+        <div class="user-dropdown" id="userDropdown">
+            <a asp-area="Identity" asp-page="/Account/Manage/Index">
+                Quản lý thông tin
             </a>
-            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="userDropdown">
-                <li>
-                    <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">
-                        <i class="bi bi-gear me-2"></i> Quản lý tài khoản
-                    </a>
-                </li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout"
-                          asp-route-returnUrl="@Url.Action("Index", "Dashboard", new { area = "" })" method="post">
-                        <button type="submit" class="dropdown-item text-danger">
-                            <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
-                        </button>
-                    </form>
-                </li>
-            </ul>
-        </li>
-    }
-    else
-    {
-        <li class="nav-item">
-            <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Register">
-                <i class="bi bi-person-plus me-2"></i> Đăng ký
+
+            <a asp-area="Identity" asp-page="/Account/Manage/ChangePassword">
+                Đổi mật khẩu
             </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Login">
-                <i class="bi bi-box-arrow-in-right me-2"></i> Đăng nhập
-            </a>
-        </li>
-    }
-</ul>
+
+            <form asp-area="Identity"
+                  asp-page="/Account/Logout"
+                  method="post">
+                <button type="submit" class="logout-btn">
+                    Đăng xuất
+                </button>
+            </form>
+        </div>
+    </div>
+}
+else
+{
+    <div class="auth-actions">
+        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary">
+            Đăng nhập
+        </a>
+        <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline">
+            Đăng ký
+        </a>
+    </div>
+}

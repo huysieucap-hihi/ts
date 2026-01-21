@@ -6,46 +6,63 @@
     var projectName = ViewData["ProjectName"] as string;
 }
 
-<h2 class="mb-4">@ViewData["Title"]</h2>
-<p><strong>Test Suite:</strong> @testSuiteName | <strong>Project:</strong> @projectName</p>
-<!-- HIỂN THỊ LỖI CHI TIẾT (DEBUG) -->
+@* HEADER *@
+<div class="page-header-container">
+    <div class="page-title">
+        <h2>@ViewData["Title"]</h2>
+        <div style="font-size: 0.95rem; color: #666; margin-top: 8px;">
+            Project: <strong>@projectName</strong> | Suite: <strong>@testSuiteName</strong>
+        </div>
+    </div>
+</div>
+
+@* ERROR DEBUG (Giữ lại logic của bạn nhưng style lại) *@
 @if (ViewBag.ModelStateErrors != null)
 {
-    <div class="alert alert-warning">
-        <strong>Lỗi validation (debug):</strong>
-        <ul>
-            @foreach (var error in ViewBag.ModelStateErrors as Dictionary<string, string[]>)
-            {
-                <li>@error.Key: @string.Join(", ", error.Value)</li>
-            }
-        </ul>
+    <div class="alert-box danger" style="margin-bottom: 20px;">
+        <div>
+            <strong>Lỗi Validation:</strong>
+            <ul style="margin: 5px 0 0 20px; padding: 0;">
+                @foreach (var error in ViewBag.ModelStateErrors as Dictionary<string, string[]>)
+                {
+                    <li>@error.Key: @string.Join(", ", error.Value)</li>
+                }
+            </ul>
+        </div>
     </div>
 }
+
 <form asp-action="Create" method="post">
     <input type="hidden" asp-for="TestSuiteId" />
     <input type="hidden" asp-for="CreatedAt" />
 
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label asp-for="Code" class="form-label fw-bold"></label>
-                <input asp-for="Code" class="form-control" placeholder="VD: TC_LOGIN_001" required />
+    @* PHẦN 1: THÔNG TIN CHUNG *@
+    <div class="content-box">
+        <h4 class="box-title">Thông tin chung</h4>
+
+        <div class="form-grid">
+            @* Cột 1 *@
+            <div class="form-group">
+                <label asp-for="Code" class="form-label required">Mã Test Case</label>
+                <input asp-for="Code" class="form-input" placeholder="VD: TC_LOGIN_001" required />
                 <span asp-validation-for="Code" class="text-danger"></span>
-                <div class="form-text">Code sẽ được sử dụng để tham chiếu Test Case</div>
+                <small class="form-hint">Mã định danh duy nhất cho Test Case này.</small>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Title" class="form-label fw-bold"></label>
-                <input asp-for="Title" class="form-control" placeholder="Nhập tiêu đề Test Case" required />
+            @* Cột 2 *@
+            <div class="form-group">
+                <label asp-for="Title" class="form-label required">Tiêu đề</label>
+                <input asp-for="Title" class="form-input" placeholder="Nhập tiêu đề ngắn gọn" required />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Priority" class="form-label fw-bold"></label>
-                <select asp-for="Priority" class="form-select">
-                    <option value="">Chọn độ ưu tiên</option>
+            @* Cột 3 *@
+            <div class="form-group">
+                <label asp-for="Priority" class="form-label">Độ ưu tiên</label>
+                <select asp-for="Priority" class="form-input">
+                    <option value="">-- Chọn --</option>
                     <option value="1">Low</option>
                     <option value="2" selected>Medium</option>
                     <option value="3">High</option>
@@ -53,61 +70,65 @@
                 </select>
                 <span asp-validation-for="Priority" class="text-danger"></span>
             </div>
-        </div>
 
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label asp-for="Status" class="form-label fw-bold"></label>
-                <select asp-for="Status" class="form-select">
+            @* Cột 4 *@
+            <div class="form-group">
+                <label asp-for="Status" class="form-label">Trạng thái</label>
+                <select asp-for="Status" class="form-input">
                     <option value="1" selected>Draft</option>
                     <option value="2">Active</option>
                     <option value="3">Inactive</option>
                 </select>
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
+        </div>
 
-            <div class="mb-3">
-                <label asp-for="Description" class="form-label fw-bold"></label>
-                <textarea asp-for="Description" class="form-control" rows="6" placeholder="Mô tả chi tiết Test Case..."></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
+        @* Full width description *@
+        <div class="form-group" style="margin-top: 15px;">
+            <label asp-for="Description" class="form-label">Mô tả chi tiết</label>
+            <textarea asp-for="Description" class="form-input" rows="4" placeholder="Mô tả tiền điều kiện, mục đích..."></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
         </div>
     </div>
 
-    <!-- Test Steps -->
-    <div class="card mt-4">
-        <div class="card-header">
-            <h5 class="card-title mb-0">
-                <i class="bi bi-list-ol"></i> Test Steps
-                <button type="button" class="btn btn-sm btn-outline-primary float-end" onclick="addStep()">
-                    <i class="bi bi-plus"></i> Thêm Step
-                </button>
-            </h5>
+    @* PHẦN 2: TEST STEPS *@
+    <div class="content-box">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+            <h4 class="box-title" style="margin: 0; border: none;">Test Steps</h4>
+            <button type="button" class="btn-custom btn-create" onclick="addStep()" style="font-size: 0.9rem; padding: 6px 12px;">
+                + Thêm Step
+            </button>
         </div>
-        <div class="card-body">
-            <div id="steps-container">
-                <div class="step-row mb-3" data-step="1">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Action</label>
-                            <textarea name="Actions[0]" class="form-control" rows="2" placeholder="Hành động thực hiện (Step 1)" required></textarea>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Expected Result</label>
-                            <textarea name="ExpectedResults[0]" class="form-control" rows="2" placeholder="Kết quả mong đợi"></textarea>
-                        </div>
+
+        <div id="steps-container">
+            @* Step mặc định *@
+            <div class="step-item" data-step="1">
+                <div class="step-header">
+                    <span class="step-badge">Step 1</span>
+                    <button type="button" class="btn-close-step" onclick="removeStep(this)" title="Xóa step này">×</button>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Hành động (Action)</label>
+                        <textarea name="Actions[0]" class="form-input" rows="2" placeholder="Nhập hành động..." required></textarea>
                     </div>
-                    <div class="mt-2">
-                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeStep(this)">Xóa Step</button>
+                    <div class="form-group">
+                        <label class="form-label">Kết quả mong đợi (Expected)</label>
+                        <textarea name="ExpectedResults[0]" class="form-input" rows="2" placeholder="Nhập kết quả..."></textarea>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="mt-4 d-flex gap-2">
-        <button type="submit" class="btn btn-success">Tạo Test Case</button>
-        <a asp-action="Index" asp-route-testSuiteId="@Model.TestSuiteId" class="btn btn-secondary">Quay lại</a>
+    @* ACTION BUTTONS *@
+    <div class="action-group" style="margin-top: 20px;">
+        <button type="submit" class="btn-custom btn-create" style="padding: 10px 25px; font-size: 1rem;">
+            Lưu Test Case
+        </button>
+        <a asp-action="Index" asp-route-testSuiteId="@Model.TestSuiteId" class="btn-custom btn-back" style="padding: 10px 25px; font-size: 1rem;">
+            Hủy bỏ
+        </a>
     </div>
 </form>
 
@@ -123,36 +144,47 @@
             stepCounter++;
             const container = document.getElementById('steps-container');
             const newStep = document.createElement('div');
-            newStep.className = 'step-row mb-3';
+            newStep.className = 'step-item';
             newStep.dataset.step = stepCounter;
+
+            // HTML Template string đã được loại bỏ class Bootstrap
             newStep.innerHTML = `
-                <div class="row">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Action</label>
-                        <textarea name="Actions[${stepCounter - 1}]" class="form-control" rows="2" placeholder="Hành động thực hiện (Step ${stepCounter})" required></textarea>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Expected Result</label>
-                        <textarea name="ExpectedResults[${stepCounter - 1}]" class="form-control" rows="2" placeholder="Kết quả mong đợi"></textarea>
-                    </div>
+                <div class="step-header">
+                    <span class="step-badge">Step ${stepCounter}</span>
+                    <button type="button" class="btn-close-step" onclick="removeStep(this)" title="Xóa step này">×</button>
                 </div>
-                <div class="mt-2">
-                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeStep(this)">Xóa Step</button>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Hành động (Action)</label>
+                        <textarea name="Actions[${stepCounter - 1}]" class="form-input" rows="2" placeholder="Nhập hành động..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Kết quả mong đợi (Expected)</label>
+                        <textarea name="ExpectedResults[${stepCounter - 1}]" class="form-input" rows="2" placeholder="Nhập kết quả..."></textarea>
+                    </div>
                 </div>
             `;
             container.appendChild(newStep);
         }
 
         function removeStep(button) {
-            const stepRow = button.closest('.step-row');
-            stepRow.remove();
-            // Re-index remaining steps
-            const steps = document.querySelectorAll('.step-row');
+            const stepItem = button.closest('.step-item');
+            stepItem.remove();
+
+            // Re-index logic (Giữ nguyên logic của bạn)
+            const steps = document.querySelectorAll('.step-item');
             steps.forEach((step, index) => {
-                step.dataset.step = index + 1;
+                const newIndex = index + 1;
+                step.dataset.step = newIndex;
+                step.querySelector('.step-badge').textContent = `Step ${newIndex}`;
+
                 const action = step.querySelector('textarea[name^="Actions"]');
                 const expected = step.querySelector('textarea[name^="ExpectedResults"]');
-                if (action) action.name = `Actions[${index}]`;
+
+                if (action) {
+                    action.name = `Actions[${index}]`;
+                    action.placeholder = `Nhập hành động...`; // Reset placeholder nếu cần
+                }
                 if (expected) expected.name = `ExpectedResults[${index}]`;
             });
             stepCounter = steps.length;

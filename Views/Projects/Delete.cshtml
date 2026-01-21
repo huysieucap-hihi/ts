@@ -4,31 +4,66 @@
     ViewData["Title"] = "Xóa Project";
 }
 
-<h2 class="mb-4">@ViewData["Title"]</h2>
+@* BỌC TOÀN BỘ TRONG CONTAINER-CENTER *@
+<div class="container-center">
 
-<div class="alert alert-danger">
-    <strong>Bạn có chắc chắn muốn xóa project này?</strong>
-    <p>Tất cả Test Suite, Test Case và dữ liệu liên quan sẽ bị xóa vĩnh viễn!</p>
-</div>
-
-<dl class="row">
-    <dt class="col-sm-3">Tên Project</dt>
-    <dd class="col-sm-9">@Model.Name</dd>
-
-    <dt class="col-sm-3">Mô tả</dt>
-    <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.Description) ? "-" : Model.Description)</dd>
-
-    <dt class="col-sm-3">Ngày tạo</dt>
-    <dd class="col-sm-9">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</dd>
-
-    <dt class="col-sm-3">Số Test Suite</dt>
-    <dd class="col-sm-9">@Model.TestSuites?.Count ?? 0</dd>
-</dl>
-
-<form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="Id" />
-    <div class="d-flex gap-2">
-        <button type="submit" class="btn btn-danger">Xóa vĩnh viễn</button>
-        <a asp-action="Index" class="btn btn-secondary">Hủy bỏ</a>
+    @* HEADER *@
+    <div class="page-header-container">
+        <div class="page-title">
+            <h2>@ViewData["Title"]</h2>
+        </div>
     </div>
-</form>
+
+    @* CẢNH BÁO (DANGER ALERT) *@
+    <div class="alert-box danger">
+        <span>
+            <strong>Cảnh báo cực kỳ quan trọng!</strong> Bạn sắp xóa project <strong>@Model.Name</strong>.
+            <br />Hành động này sẽ xóa vĩnh viễn tất cả <strong>Test Suite, Test Case và Lịch sử chạy test</strong> bên trong. Không thể khôi phục!
+        </span>
+    </div>
+
+    @* NỘI DUNG CHI TIẾT *@
+    <div class="content-box" style="max-width: 800px;">
+        <h4 class="box-title">Thông tin xác nhận</h4>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="label">Tên Project:</span>
+                <span class="value" style="font-weight: bold; color: #d9534f;">@Model.Name</span>
+            </div>
+
+            <div class="info-item">
+                <span class="label">Mô tả:</span>
+                <span class="value">@(string.IsNullOrEmpty(Model.Description) ? "-" : Model.Description)</span>
+            </div>
+
+            <div class="info-item">
+                <span class="label">Ngày tạo:</span>
+                <span class="value">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+            </div>
+
+            <div class="info-item">
+                <span class="label">Số lượng Test Suite:</span>
+                <span class="value" style="font-weight: bold;">
+                    @(Model.TestSuites?.Count ?? 0) suites
+                </span>
+            </div>
+        </div>
+    </div>
+
+    @* FORM XÁC NHẬN *@
+    <form asp-action="Delete" method="post" style="margin-top: 20px;">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="action-group">
+            <button type="submit" class="btn-custom btn-delete" style="padding: 10px 20px; font-size: 1rem;">
+                ✖ Xác nhận xóa vĩnh viễn
+            </button>
+
+            <a asp-action="Index" class="btn-custom btn-back" style="padding: 10px 20px; font-size: 1rem;">
+                Hủy bỏ
+            </a>
+        </div>
+    </form>
+
+</div>

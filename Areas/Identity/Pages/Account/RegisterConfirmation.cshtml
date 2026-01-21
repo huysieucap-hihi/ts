@@ -2,50 +2,129 @@
 @model RegisterConfirmationModel
 @{
     ViewData["Title"] = "Xác nhận đăng ký";
+    Layout = null;
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-body text-center">
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-                    <h1 class="card-title mb-4">
-                        @ViewData["Title"]
-                    </h1>
+    <style>
+        /* --- ĐOẠN CSS CĂN GIỮA QUAN TRỌNG --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
 
-                    @if (Model.DisplayConfirmAccountLink)
-                    {
-                        <div class="alert alert-warning">
-                            <p class="mb-2">
-                                Ứng dụng hiện chưa được cấu hình chức năng gửi email thật.
-                            </p>
-                            <p class="mb-2">
-                                Xem
-                                <a href="https://aka.ms/aspaccountconf" target="_blank">
-                                    tài liệu hướng dẫn
-                                </a>
-                                để cấu hình dịch vụ gửi email.
-                            </p>
+        body {
+            display: flex; /* Dùng Flexbox */
+            justify-content: center; /* Căn giữa ngang */
+            align-items: center; /* Căn giữa dọc */
+            min-height: 100vh; /* Chiều cao 100% màn hình */
+            background: linear-gradient(90deg, #e2e2e2, #c9d6ff); /* Màu nền */
+        }
 
-                            <a id="confirm-link"
-                               class="btn btn-primary mt-3"
-                               href="@Model.EmailConfirmationUrl">
-                                Xác nhận tài khoản
-                            </a>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="alert alert-success">
-                            <p class="mb-0">
-                                Vui lòng kiểm tra email của bạn để xác nhận tài khoản.
-                            </p>
-                        </div>
-                    }
+        .container {
+            width: 600px;
+            background: #fff;
+            border-radius: 30px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, .2);
+            padding: 40px;
+            text-align: center;
+        }
 
-                </div>
+        .icon-large {
+            font-size: 80px;
+            color: #7494ec;
+            margin-bottom: 20px;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .message-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #e9ecef;
+        }
+
+            .message-box.warning {
+                background: #fff3cd;
+                border-color: #ffeeba;
+                color: #856404;
+            }
+
+        .btn-confirm {
+            background: #7494ec;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 15px;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(116, 148, 236, 0.4);
+            border: none;
+            cursor: pointer;
+        }
+
+            .btn-confirm:hover {
+                background: #5a7bcf;
+                transform: translateY(-2px);
+            }
+
+        @@keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-10px);
+            }
+
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <i class='bx bx-envelope-open icon-large'></i>
+        <h1>@ViewData["Title"]</h1>
+
+        @if (Model.DisplayConfirmAccountLink)
+        {
+            <div class="message-box warning">
+                <p><strong>Lưu ý:</strong> Đây là môi trường phát triển (Development).</p>
+                <p style="font-size: 13px; margin-top:5px;">Xem <a href="https://aka.ms/aspaccountconf" target="_blank">tài liệu</a> để cấu hình email thật.</p>
             </div>
-        </div>
+            <a href="@Model.EmailConfirmationUrl" class="btn-confirm">Nhấn vào đây để xác nhận tài khoản</a>
+        }
+        else
+        {
+            <div class="message-box">
+                <p>Chúng tôi đã gửi email xác nhận. Vui lòng kiểm tra hòm thư của bạn.</p>
+            </div>
+            <a href="/Identity/Account/Login" style="color:#7494ec; text-decoration:none; font-weight:500;">
+                <i class='bx bx-arrow-back'></i> Quay lại đăng nhập
+            </a>
+        }
     </div>
-</div>
+</body>
+</html>

@@ -28,29 +28,12 @@ namespace WebsiteQL_Testcase
                 options.SignIn.RequireConfirmedAccount = true; // Có thể đổi false nếu không cần confirm email
             })
             .AddEntityFrameworkStores<ApplicationDbContext>();
-
-            // LOCALIZATION (ĐA NGÔN NGỮ)
-            builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-
-            builder.Services.Configure<RequestLocalizationOptions>(options =>
+            builder.Services.ConfigureApplicationCookie(options =>
             {
-                var supportedCultures = new[]
-                {
-                    new CultureInfo("vi-VN"),
-                    new CultureInfo("en-US")
-                };
-
-                options.DefaultRequestCulture = new RequestCulture("vi-VN");
-                options.SupportedCultures = supportedCultures;
-                options.SupportedUICultures = supportedCultures;
-
-                options.RequestCultureProviders = new List<IRequestCultureProvider>
-                {
-                    new QueryStringRequestCultureProvider(),
-                    new CookieRequestCultureProvider(),
-                    new AcceptLanguageHeaderRequestCultureProvider()
-                };
+                options.LoginPath = "/Identity/Account/Login";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
             });
+    
 
             // CONTROLLERS WITH VIEWS + VIEW LOCALIZATION
             builder.Services.AddControllersWithViews()
@@ -84,7 +67,7 @@ namespace WebsiteQL_Testcase
               name: "default",
               pattern: "{controller=Dashboard}/{action=Index}/{id?}");
 
-          
+
 
             app.MapRazorPages(); // Cần cho các trang Identity (Login, Register...)
 
