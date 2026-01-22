@@ -14,7 +14,7 @@ body {
     font-family: system-ui, -apple-system, Segoe UI, sans-serif;
     margin: 0;
     min-height: 100vh;
-    background: #f8fafc;
+    background: linear-gradient(90deg, #e2e2e2, #c9d6ff); /* Nền Gradient Login */
     color: #1f2937;
 }
 
@@ -24,21 +24,22 @@ body {
     min-height: 100vh;
 }
 
-/* ================= SIDEBAR (NỀN TRẮNG - CHỮ ĐEN) ================= */
+/* ================= SIDEBAR (ĐÃ SỬA: TRONG SUỐT) ================= */
 .sidebar {
     width: 260px;
     min-height: 100vh;
-    background: #ffffff;
-    color: #000000;
+    background: transparent !important; /* Trong suốt để hiện nền Body */
+    color: #1f2937;
     flex-shrink: 0;
-    border-right: 1px solid #e5e7eb;
+    border-right: 1px solid rgba(0, 0, 0, 0.1); /* Viền mờ */
 }
 
 .sidebar-header {
     padding: 16px;
     font-weight: 600;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Viền mờ */
     color: #000000;
+    background: transparent;
 }
 
 /* Link và Button trong Sidebar */
@@ -60,13 +61,13 @@ body {
 
     .sidebar-item:hover,
     .sidebar-item:focus {
-        background: #f1f5f9;
+        background: rgba(255, 255, 255, 0.5); /* Trắng mờ khi di chuột */
         color: #000000;
         outline: none;
     }
 
     .sidebar-item.active {
-        background: #eff6ff;
+        background: rgba(255, 255, 255, 0.8); /* Trắng đục khi đang chọn */
         color: #2563eb;
         font-weight: 700;
         border-right: 3px solid #2563eb;
@@ -80,9 +81,9 @@ body {
     .sidebar-dropdown .dropdown-menu {
         max-height: 0;
         overflow: hidden;
-        background: #f8fafc;
+        background: rgba(255, 255, 255, 0.3); /* Nền dropdown hơi mờ */
         transition: max-height 0.25s ease;
-        border-bottom: 1px solid #e5e7eb;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
 
     .sidebar-dropdown.open .dropdown-menu {
@@ -98,7 +99,7 @@ body {
 }
 
     .dropdown-menu a:hover {
-        background: #e2e8f0;
+        background: rgba(255, 255, 255, 0.6);
         color: #000000;
     }
 
@@ -107,19 +108,19 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    background: #f8fafc;
+    background: transparent; /* Trong suốt */
     min-width: 0;
 }
 
 /* PAGE HEADER (CHUNG) */
 .page-header {
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.8); /* Header trắng mờ */
     color: #1f2937;
     padding: 16px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
 }
 
 main {
@@ -334,10 +335,10 @@ input, textarea, select {
 .footer {
     padding: 12px;
     text-align: center;
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.8);
     color: #64748b;
     margin-top: auto;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid rgba(0,0,0,0.1);
 }
 
 /* ================= AUTH & USER MENU ================= */
@@ -501,7 +502,6 @@ input, textarea, select {
 
 /* ================================================================== 
    2. PAGE SPECIFIC CUSTOM STYLES (TEST SUITES & OTHERS)
-   (Phần này thêm vào để hỗ trợ view Test Suites đẹp hơn)
    ================================================================== */
 
 .page-header-container {
@@ -527,15 +527,15 @@ input, textarea, select {
 .btn-custom {
     display: inline-flex;
     align-items: center;
-    padding: 6px 12px; /* Chỉnh lại padding cho đẹp hơn */
+    padding: 6px 12px;
     border-radius: 4px;
     text-decoration: none;
-    font-weight: 600; /* Chữ đậm hơn chút */
+    font-weight: 600;
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.2s ease;
     border: 1px solid transparent;
-    margin: 4px; /* Cách nhau ra một chút */
+    margin: 4px;
 }
 
 .btn-create {
@@ -557,6 +557,7 @@ input, textarea, select {
         background-color: #f1f5f9;
         border-color: #94a3b8;
     }
+
 .btn-detail {
     background-color: #0ea5e9;
     color: white !important;
@@ -585,6 +586,7 @@ input, textarea, select {
     .btn-delete:hover {
         background-color: #dc2626;
     }
+
 /* Custom Table cho trang list */
 .table-container {
     overflow-x: auto;
@@ -661,6 +663,7 @@ input, textarea, select {
     [data-theme="dark"] .btn-run:hover {
         background-color: #15803d !important;
     }
+
 /* ================= DETAILS PAGE LAYOUT (Mới) ================= */
 
 /* Layout chia 2 cột */
@@ -804,6 +807,7 @@ input, textarea, select {
     [data-theme="dark"] .history-item .date {
         color: #94a3b8;
     }
+
 /* ================================================================== 
    3. DARK MODE OVERRIDES (GLOBAL & CUSTOM)
    ================================================================== */
@@ -951,6 +955,7 @@ input, textarea, select {
     color: #dcfce7;
     border-color: #166534;
 }
+
 /* ================= ALERT DANGER (Dùng cho trang xóa) ================= */
 .alert-box.danger {
     background-color: #fef2f2;
@@ -970,6 +975,7 @@ input, textarea, select {
     gap: 12px;
     align-items: center;
 }
+
 /* ================= FORM STYLES (Dùng cho trang Create/Edit) ================= */
 
 /* Lưới Form 2 cột */
@@ -1148,166 +1154,41 @@ input, textarea, select {
     background-color: #312e81; /* Xanh tím tối */
     color: #c7d2fe; /* Chữ sáng */
 }
+
 /* ================================================================== 
-   3. DARK MODE OVERRIDES (ĐÃ FIX LỖI KHÓ NHÌN)
+   TÙY CHỈNH: ĐỒNG BỘ NÚT PHỤ VỀ MÀU XANH DƯƠNG (#2563eb)
+   (Giữ nguyên màu nút Sửa, Xóa, Thêm/Create)
    ================================================================== */
 
-/* --- A. GLOBAL ELEMENTS (NỀN & CHỮ) --- */
-[data-theme="dark"] body,
-[data-theme="dark"] .main-content {
-    background-color: #0f172a !important; /* Nền xanh đen đậm */
-    color: #f1f5f9 !important; /* Chữ trắng sáng */
-}
-
-/* Các khối chính: Sidebar, Header, Card... */
-[data-theme="dark"] .sidebar,
-[data-theme="dark"] .page-header,
-[data-theme="dark"] .card,
-[data-theme="dark"] .stat-card,
-[data-theme="dark"] .footer,
-[data-theme="dark"] .logout-card,
-[data-theme="dark"] .public-header,
-[data-theme="dark"] .dropdown-menu,
-[data-theme="dark"] .user-dropdown {
-    background-color: #1e293b !important; /* Nền các khối sáng hơn nền web 1 chút */
-    color: #f1f5f9 !important;
-    border-color: #334155 !important;
-}
-
-/* Sidebar Menu */
-[data-theme="dark"] .sidebar-header {
-    border-bottom-color: #334155 !important;
+/* 1. Đổi nút Chi tiết (Detail) và nút Chạy (Run) sang màu xanh dương chủ đạo */
+.btn-detail,
+.btn-run,
+.btn-success {
+    background-color: #2563eb !important;
+    border-color: #2563eb !important;
     color: #ffffff !important;
 }
 
-[data-theme="dark"] .sidebar-item {
-    color: #cbd5e1 !important;
-}
-
-    [data-theme="dark"] .sidebar-item:hover,
-    [data-theme="dark"] .sidebar-item:focus {
-        background-color: #334155 !important;
-        color: #ffffff !important;
+    /* 2. Hiệu ứng khi di chuột (Hover) -> Xanh đậm hơn */
+    .btn-detail:hover,
+    .btn-run:hover,
+    .btn-success:hover {
+        background-color: #1d4ed8 !important;
+        border-color: #1d4ed8 !important;
     }
 
-    [data-theme="dark"] .sidebar-item.active {
-        background-color: #1d4ed8 !important; /* Xanh dương đậm hơn chút cho dịu mắt */
-        color: #ffffff !important;
-        border-right-color: #60a5fa !important;
-    }
-
-/* --- B. TABLE & BUTTONS (PHẦN QUAN TRỌNG ĐỂ FIX ẢNH BẠN GỬI) --- */
-
-/* 1. Xử lý Bảng (Table) */
-[data-theme="dark"] .custom-table {
-    background-color: #1e293b !important;
-    color: #e2e8f0 !important;
-}
-
-    [data-theme="dark"] .custom-table th {
-        background-color: #0f172a !important; /* Header bảng tối hơn */
-        color: #94a3b8 !important; /* Chữ header màu xám sáng */
-        border-bottom: 1px solid #475569 !important;
-        text-transform: uppercase;
-        font-size: 0.8rem;
-        letter-spacing: 0.5px;
-    }
-
-    [data-theme="dark"] .custom-table td {
-        border-bottom: 1px solid #334155 !important;
-        vertical-align: middle;
-    }
-
-    /* Hiệu ứng hover dòng: Sáng lên chút để dễ nhìn */
-    [data-theme="dark"] .custom-table tbody tr:hover {
-        background-color: #334155 !important;
-    }
-
-[data-theme="dark"] .table-container {
-    border: 1px solid #334155;
-    box-shadow: none;
-}
-
-/* 2. Xử lý Nút Bấm (FIX LỖI CHỮ TÍM/TỐI) */
-/* Ép tất cả nút custom trong dark mode phải có chữ trắng */
-[data-theme="dark"] .btn-custom {
-    color: #ffffff !important;
-    border: 1px solid rgba(255,255,255,0.1) !important;
-}
-
-/* Nút Chi tiết (Xanh Cyan) */
-[data-theme="dark"] .btn-detail {
-    background-color: #0ea5e9 !important; /* Xanh sáng hơn */
+/* 3. Xử lý cho Chế độ tối (Dark Mode) */
+[data-theme="dark"] .btn-detail,
+[data-theme="dark"] .btn-run,
+[data-theme="dark"] .btn-success {
+    background-color: #2563eb !important;
+    border-color: #2563eb !important;
     color: #ffffff !important;
 }
 
-    [data-theme="dark"] .btn-detail:hover {
-        background-color: #0284c7 !important;
+    [data-theme="dark"] .btn-detail:hover,
+    [data-theme="dark"] .btn-run:hover,
+    [data-theme="dark"] .btn-success:hover {
+        background-color: #1d4ed8 !important;
+        border-color: #1d4ed8 !important;
     }
-
-/* Nút Sửa (Vàng) */
-[data-theme="dark"] .btn-edit {
-    background-color: #eab308 !important; /* Vàng đậm hơn để đỡ chói nhưng vẫn rõ */
-    color: #000000 !important; /* Chữ đen trên nền vàng mới đọc được */
-}
-
-    [data-theme="dark"] .btn-edit:hover {
-        background-color: #ca8a04 !important;
-    }
-
-/* Nút Xóa (Đỏ) */
-[data-theme="dark"] .btn-delete {
-    background-color: #ef4444 !important; /* Đỏ tươi */
-    color: #ffffff !important;
-}
-
-    [data-theme="dark"] .btn-delete:hover {
-        background-color: #dc2626 !important;
-    }
-
-/* Nút Quay lại (Back) */
-[data-theme="dark"] .btn-back {
-    color: #e2e8f0 !important;
-    border-color: #64748b !important;
-    background-color: transparent !important;
-}
-
-    [data-theme="dark"] .btn-back:hover {
-        background-color: #334155 !important;
-        color: #ffffff !important;
-    }
-
-/* --- C. FORM ELEMENTS & ALERTS --- */
-[data-theme="dark"] input,
-[data-theme="dark"] select,
-[data-theme="dark"] textarea {
-    background-color: #0f172a !important; /* Nền input tối */
-    border-color: #475569 !important;
-    color: #ffffff !important;
-}
-
-    [data-theme="dark"] input:focus {
-        border-color: #38bdf8 !important; /* Viền focus xanh sáng */
-        outline: none;
-    }
-
-[data-theme="dark"] .alert-box {
-    background-color: #064e3b !important; /* Xanh lá rất tối */
-    color: #6ee7b7 !important; /* Chữ xanh lá sáng */
-    border-color: #059669 !important;
-}
-
-[data-theme="dark"] .page-title h2 {
-    color: #f8fafc !important;
-}
-
-[data-theme="dark"] .page-title strong {
-    color: #38bdf8 !important;
-}
-/* ================= LAYOUT CANH GIỮA (Dùng cho các form Create/Edit) ================= */
-.container-center {
-    max-width: 1200px; /* Giới hạn chiều rộng để form không bị bè ra quá dài */
-    margin-left: auto; /* Tự động đẩy lề trái */
-    margin-right: auto; /* Tự động đẩy lề phải -> Kết quả là nằm giữa */
-    width: 100%;
-}

@@ -12,7 +12,7 @@ namespace WebsiteQL_Testcase
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            builder.WebHost.UseUrls("http://0.0.0.0:5000");
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
                                    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -52,7 +52,7 @@ namespace WebsiteQL_Testcase
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRequestLocalization(); // Phải đặt trước UseRouting
