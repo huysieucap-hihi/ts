@@ -2,162 +2,152 @@
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
-    <meta name="google" content="notranslate" />
-    <title>@ViewData["Title"] - Test Case Management</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Test Case Management</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
     <script>
         (function() {
             try {
-                // Kiểm tra localStorage
                 var localTheme = localStorage.getItem('theme');
-                // Kiểm tra cài đặt hệ thống (Windows/Mac đang để dark hay light)
                 var supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-                // Nếu đã lưu 'dark' HOẶC (chưa lưu gì cả NHƯNG máy tính đang để dark mode)
                 if (localTheme === 'dark' || (!localTheme && supportDarkMode)) {
                     document.documentElement.setAttribute('data-theme', 'dark');
                 }
             } catch (e) {}
         })();
     </script>
-
-    <style>
-        /* Đảm bảo khi html có data-theme="dark", nền đổi màu ngay lập tức */
-        [data-theme="dark"] {
-            background-color: #1a1a1a !important; /* Thay mã màu này trùng với màu nền tối trong CSS của bạn */
-            color: #e0e0e0;
-        }
-
-            [data-theme="dark"] body {
-                background-color: #1a1a1a !important;
-                color: #e0e0e0;
-            }
-    </style>
 </head>
 <body>
 
-    @* ===== HEADER CHO NGƯỜI CHƯA LOGIN ===== *@
+    @* ===== HEADER (Cho người chưa đăng nhập) ===== *@
     @if (User.Identity?.IsAuthenticated != true)
     {
         <header class="public-header">
             <div class="public-header-inner">
                 <span class="logo">Test Case Management</span>
-
                 <div class="auth-actions">
-                    <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary">
-                        Đăng nhập
-                    </a>
-                    <a asp-area="Identity" asp-page="/Account/login" class="btn btn-outline">
-                        Đăng ký
-                    </a>
+                    <a asp-area="Identity" asp-page="/Account/Login" class="btn-auth primary">Đăng nhập</a>
+                    <a asp-area="Identity" asp-page="/Account/login" class="btn-auth outline">Đăng ký</a>
                 </div>
             </div>
         </header>
     }
 
-    <div class="app-layout">
+    <div class="app-container">
 
         @* ===== SIDEBAR ===== *@
         @if (User.Identity?.IsAuthenticated == true)
         {
             <aside class="sidebar">
-                <div class="sidebar-header">
-                    <h4>Test Case Management</h4>
+                <div class="sidebar-logo">
+                    <i class="fa-solid fa-house-chimney"></i>
                 </div>
 
-                <nav class="sidebar-nav">
-                    <a class="sidebar-item @(Context.Request.Path.StartsWithSegments("/Dashboard") || Context.Request.Path == "/" || Context.Request.Path.StartsWithSegments("/Home") ? "active" : "")"
-                       asp-controller="Dashboard" asp-action="Index">
-                        Dashboard
-                    </a>
-
-                    <a class="sidebar-item @(Context.Request.Path.StartsWithSegments("/Projects") ? "active" : "")"
-                       asp-controller="Projects" asp-action="Index">
-                        Projects
-                    </a>
-
-                    <div class="sidebar-dropdown">
-                        <button type="button" class="sidebar-item dropdown-toggle">
-                            Test Suites
+                <nav class="sidebar-menu">
+                    <form asp-controller="Dashboard" asp-action="Index" method="get" class="nav-form">
+                        <button type="submit" class="menu-btn @(Context.Request.Path.StartsWithSegments("/Dashboard") || Context.Request.Path == "/" ? "active" : "")">
+                            <i class="fa-solid fa-gauge-high"></i>
+                            <span>Dashboard</span>
                         </button>
-                        <div class="dropdown-menu">
+                    </form>
+
+                    <form asp-controller="Projects" asp-action="Index" method="get" class="nav-form">
+                        <button type="submit" class="menu-btn @(Context.Request.Path.StartsWithSegments("/Projects") ? "active" : "")">
+                            <i class="fa-solid fa-folder-open"></i>
+                            <span>Projects</span>
+                        </button>
+                    </form>
+
+                    <div class="nav-dropdown">
+                        <button type="button" class="menu-btn dropdown-toggle" onclick="toggleDropdown(this)">
+                            <i class="fa-solid fa-layer-group"></i>
+                            <span>Test Suites</span>
+                            <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                        </button>
+                        <div class="dropdown-content">
                             @await Component.InvokeAsync("ProjectListForSidebar")
                         </div>
                     </div>
 
-                    <div class="sidebar-dropdown">
-                        <button type="button" class="sidebar-item dropdown-toggle">
-                            Test Cases
+                    <div class="nav-dropdown">
+                        <button type="button" class="menu-btn dropdown-toggle" onclick="toggleDropdown(this)">
+                            <i class="fa-solid fa-list-check"></i>
+                            <span>Test Cases</span>
+                            <i class="fa-solid fa-chevron-down arrow-icon"></i>
                         </button>
-                        <div class="dropdown-menu">
+                        <div class="dropdown-content">
                             @await Component.InvokeAsync("TestSuiteListForSidebar")
                         </div>
                     </div>
 
-                    <div class="sidebar-dropdown">
-                        <button type="button" class="sidebar-item dropdown-toggle">
-                            Executions
+                    <div class="nav-dropdown">
+                        <button type="button" class="menu-btn dropdown-toggle" onclick="toggleDropdown(this)">
+                            <i class="fa-solid fa-play"></i>
+                            <span>Executions</span>
+                            <i class="fa-solid fa-chevron-down arrow-icon"></i>
                         </button>
-                        <div class="dropdown-menu">
+                        <div class="dropdown-content">
                             @await Component.InvokeAsync("TestCaseListForSidebar")
                         </div>
                     </div>
 
-                    @* ĐÃ XÓA NÚT DARK MODE Ở ĐÂY ĐỂ CHUYỂN LÊN HEADER *@
+                    <a asp-area="Identity" asp-page="/Account/Manage/Index" class="nav-link-wrapper">
+                        <div class="menu-btn">
+                            <i class="fa-solid fa-user-gear"></i>
+                            <span>User Settings</span>
+                        </div>
+                    </a>
                 </nav>
             </aside>
         }
 
         @* ===== MAIN CONTENT ===== *@
-        <div class="main-content">
-            <header class="page-header">
-                <h3>@ViewData["Title"]</h3>
+        <main class="main-content">
+            <header class="top-header">
+                <h1 class="page-title">@ViewData["Title"]</h1>
 
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <div style="display: flex; align-items: center; gap: 12px;">
-
-                        <button id="theme-toggle" class="btn btn-outline" style="padding: 5px 10px;" title="Chuyển chế độ Sáng/Tối">
+                    <div class="user-controls">
+                        <button id="theme-toggle" class="btn-icon" title="Chuyển chế độ Sáng/Tối">
                             <span id="theme-icon">🌙</span>
                         </button>
 
-                        <span style="font-weight: 600; font-size: 14px;">
-                            @User.Identity.Name
-                        </span>
+                        <span class="user-name">@User.Identity.Name</span>
 
-                        <a asp-area="Identity" asp-page="/Account/Manage/Index"
-                           class="btn btn-outline"
-                           style="font-size: 13px; padding: 5px 12px; border: 1px solid #ccc;">
-                            Quản lý
-                        </a>
-
-                        <form asp-area="Identity" asp-page="/Account/Logout" method="post" style="display:inline;">
-                            <button type="submit" class="btn btn-danger"
-                                    style="font-size: 13px; padding: 5px 12px;">
-                                Đăng xuất
+                        <form asp-area="Identity" asp-page="/Account/Logout" method="post">
+                            <button type="submit" class="btn-logout">
+                                <i class="fa-solid fa-right-from-bracket"></i> Thoát
                             </button>
                         </form>
                     </div>
                 }
             </header>
 
-            <main>
+            <div class="content-body">
                 @RenderBody()
-            </main>
+            </div>
 
             <footer class="footer">
-                Web được sửa bởi Quang Huy và GPT and Gemini
-                ZALO: 0869699251
-                - © 2024 Test Case Management System
+                Web được sửa bởi Quang Huy và GPT/Gemini © 2024
             </footer>
-        </div>
-
+        </main>
     </div>
+
+    <script>
+        // Xử lý mở/đóng dropdown
+        function toggleDropdown(btn) {
+            var content = btn.nextElementSibling;
+            content.classList.toggle("show");
+            btn.classList.toggle("open");
+        }
+    </script>
 
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
-
 </body>
 </html>

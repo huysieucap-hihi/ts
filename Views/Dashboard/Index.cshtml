@@ -3,44 +3,137 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<h1>Dashboard Tổng Quan</h1>
+<div class="dashboard-header">
+    <div>
+        <h2 class="page-title">Dashboard</h2>
+        <p class="sub-text">Overview of your test case execution</p>
+    </div>
+    <div class="search-wrapper">
+        <input type="text" class="search-box" placeholder="Search..." />
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+    </div>
+</div>
 
-<div class="stat-grid">
+<div class="stats-grid">
     <div class="stat-card">
-        <h4>Total Test Cases</h4>
-        <strong>@Model.TotalCases</strong>
+        <div class="stat-icon total-icon">
+            <i class="fa-solid fa-layer-group"></i>
+        </div>
+        <div>
+            <p class="stat-label">Total test cases</p>
+            <h3 class="stat-number">@Model.TotalCases</h3>
+        </div>
     </div>
 
-    <div class="stat-card success">
-        <h4>Pass</h4>
-        <strong>@Model.PassCount</strong>
+    <div class="stat-card pass">
+        <div class="stat-icon pass-icon">
+            <i class="fa-solid fa-check"></i>
+        </div>
+        <div>
+            <p class="stat-label">Test cases Pass</p>
+            <h3 class="stat-number">@Model.PassCount</h3>
+        </div>
     </div>
 
-    <div class="stat-card danger">
-        <h4>Fail</h4>
-        <strong>@Model.FailCount</strong>
-    </div>
-</div>
-
-
-<div class="grid-3">
-    <div class="card">
-        <h4>Total Test Cases</h4>
-        <strong>@Model.TotalCases</strong>
-    </div>
-
-    <div class="card">
-        <h4>Pass</h4>
-        <strong>@Model.PassCount</strong>
-    </div>
-
-    <div class="card">
-        <h4>Fail</h4>
-        <strong>@Model.FailCount</strong>
+    <div class="stat-card fail">
+        <div class="stat-icon fail-icon">
+            <i class="fa-solid fa-xmark"></i>
+        </div>
+        <div>
+            <p class="stat-label">Test cases Fail</p>
+            <h3 class="stat-number">@Model.FailCount</h3>
+        </div>
     </div>
 </div>
 
-<div class="progress" style="margin-top:16px">
-    <div class="progress-pass" style="width:@Model.PassRate%">@Model.PassRate% Pass</div>
-    <div class="progress-fail" style="width:@Model.FailRate%">@Model.FailRate% Fail</div>
+<div class="dashboard-card">
+    <div class="card-header">
+        <h4>Pass / Fail Overview</h4>
+    </div>
+    <div class="card-body">
+        <div class="chart-container">
+            <div class="progress-bar-wrapper">
+                @if (Model.TotalCases > 0)
+                {
+                    <div class="bar-segment pass" style="width: @Model.PassRate%"></div>
+                    <div class="bar-segment fail" style="width: @Model.FailRate%"></div>
+                }
+                else
+                {
+                    <div class="bar-segment empty" style="width: 100%; background: #eee;"></div>
+                }
+            </div>
+
+            <div class="chart-legend">
+                <div class="legend-item">
+                    <span class="dot pass"></span>
+                    <span>Pass: @Model.PassRate%</span>
+                </div>
+                <div class="legend-item">
+                    <span class="dot fail"></span>
+                    <span>Fail: @Model.FailRate%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="lists-grid">
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h4>Latest Test Cases</h4>
+            <a href="#" class="view-all">View all</a>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                <li class="list-item">
+                    <span>Login Validation</span>
+                    <span class="badge pass">Pass</span>
+                </li>
+                <li class="list-item">
+                    <span>Payment Gateway</span>
+                    <span class="badge fail">Fail</span>
+                </li>
+                <li class="list-item">
+                    <span>User Profile Update</span>
+                    <span class="badge pass">Pass</span>
+                </li>
+                <li class="list-item">
+                    <span>Forgot Password</span>
+                    <span class="badge draft">Draft</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h4>Latest Projects</h4>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                <li class="list-item">
+                    <div style="display:flex; flex-direction:column;">
+                        <span style="font-weight:500">E-commerce Web</span>
+                        <span style="font-size:12px; color:#888;">Updated 2 hours ago</span>
+                    </div>
+                    <i class="fa-solid fa-angle-right" style="color:#ccc"></i>
+                </li>
+                <li class="list-item">
+                    <div style="display:flex; flex-direction:column;">
+                        <span style="font-weight:500">Mobile Banking App</span>
+                        <span style="font-size:12px; color:#888;">Updated 1 day ago</span>
+                    </div>
+                    <i class="fa-solid fa-angle-right" style="color:#ccc"></i>
+                </li>
+                <li class="list-item">
+                    <div style="display:flex; flex-direction:column;">
+                        <span style="font-weight:500">Internal CRM</span>
+                        <span style="font-size:12px; color:#888;">Updated 3 days ago</span>
+                    </div>
+                    <i class="fa-solid fa-angle-right" style="color:#ccc"></i>
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>

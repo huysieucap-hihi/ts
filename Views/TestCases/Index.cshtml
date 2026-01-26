@@ -1,136 +1,115 @@
 ﻿@model IEnumerable<WebsiteQL_Testcase.Models.TestCase>
 
 @{
-    ViewData["Title"] = "Test Cases";
+    ViewData["Title"] = "Test Case Management";
     var testSuiteId = ViewData["TestSuiteId"] as Guid?;
     var testSuiteName = ViewData["TestSuiteName"] as string;
     var projectName = ViewData["ProjectName"] as string;
 }
 
-@* BỌC TOÀN BỘ TRONG CONTAINER-CENTER *@
-<div class="container-center">
+<div id="testcase" class="page-content">
 
-    @* HEADER & ACTIONS *@
-    <div class="page-header-container">
-        <div class="page-title">
-            <h2>Test Cases: <strong>@testSuiteName</strong></h2>
-            <div style="font-size: 0.9rem; color: #666; margin-top: 4px;">Project: @projectName</div>
+    <div class="page-header-flex">
+        <div>
+            <h2>Test Case</h2>
+            <p class="sub-text">Manage and track test cases for: <strong>@testSuiteName</strong></p>
         </div>
 
-        <div class="page-actions">
-            @* NÚT QUAY LẠI: 
-               - Controller: TestSuites (Về trang Suite)
-               - Action: Index (Danh sách)
-               - Route ProjectId: Cần thiết để TestSuites/Index biết hiển thị suite của dự án nào.
-            *@
-            <a asp-controller="TestSuites"
-               asp-action="Index"
-               asp-route-projectId="@ViewData["ProjectId"]"
-               class="btn-custom btn-back">
-                ← Quay lại danh sách Suite
+        <div class="header-actions">
+            <a asp-controller="TestSuites" asp-action="Index" asp-route-projectId="@ViewData["ProjectId"]" class="btn-outline-custom">
+                <i class="fa-solid fa-arrow-left"></i> Back
             </a>
-
-            @* Nút tạo mới Test Case (Dùng TestSuiteId) *@
-            <a asp-action="Create"
-               asp-route-testSuiteId="@testSuiteId"
-               class="btn-custom btn-create">
-                + Tạo Test Case
+            <a asp-action="Create" asp-route-testSuiteId="@testSuiteId" class="btn-primary-custom">
+                <i class="fa-solid fa-plus"></i> Create Case
             </a>
         </div>
     </div>
 
-    @* ALERT SUCCESS *@
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert-box" id="successAlert">
-            <span>@TempData["Success"]</span>
-            <button type="button" class="btn-close-alert" onclick="document.getElementById('successAlert').style.display='none'">×</button>
+    <div class="filter-box">
+        <div class="search-wrapper-flat">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Search test cases..." />
         </div>
-    }
 
-    @* CONTENT *@
+        <select class="select-flat">
+            <option>All Statuses</option>
+            <option>Draft</option>
+            <option>Pass</option>
+            <option>Fail</option>
+        </select>
+
+        <select class="select-flat">
+            <option>All Priorities</option>
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+        </select>
+    </div>
+
     @if (!Model.Any())
     {
         <div class="empty-state">
-            <h4>Chưa có Test Case nào</h4>
-            <p>Tạo Test Case đầu tiên để bắt đầu quy trình kiểm thử.</p>
-            <a asp-action="Create"
-               asp-route-testSuiteId="@testSuiteId"
-               style="color: #007bff; text-decoration: none; font-weight: bold;">
-                Tạo Test Case ngay
-            </a>
+            <p>No test cases found. Create one to get started.</p>
         </div>
     }
     else
     {
-        <div class="table-container">
-            <table class="custom-table">
+        <div class="table-responsive">
+            <table class="table-flat">
                 <thead>
                     <tr>
-                        <th>Code</th>
                         <th>Title</th>
                         <th>Priority</th>
                         <th>Status</th>
-                        <th>Latest Result</th>
-                        <th>Created</th>
-                        <th style="width: 280px;">Hành động</th>
+                        <th>Create date</th>
+                        <th class="text-right">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td>
-                                <a asp-action="Details" asp-route-id="@item.Id" style="font-weight: bold; color: inherit; text-decoration: none;">
-                                    @item.Code
+                            <td class="td-title">
+                                <a asp-action="Details" asp-route-id="@item.Id">
+                                    @item.Title
                                 </a>
+                                <span class="code-ref">#@item.Code</span>
                             </td>
-                            <td>@item.Title</td>
 
-                            @* Priority Badge *@
                             <td>
-                                <span class="badge @item.Priority.ToString().ToLower()">
-                                    @item.Priority
-                                </span>
+                                <span class="badge @item.Priority.ToString().ToLower()">@item.Priority</span>
                             </td>
 
-                            @* Status Badge *@
-                            <td>
-                                <span class="badge @item.Status.ToString().ToLower()">
-                                    @item.Status
-                                </span>
-                            </td>
-
-                            @* Latest Result Badge *@
                             <td>
                                 @if (item.LatestResult.HasValue)
                                 {
-                                    <span class="badge @item.LatestResult.ToString().ToLower()">
-                                        @item.LatestResult
-                                    </span>
+                                    <span class="badge @item.LatestResult.ToString().ToLower()">@item.LatestResult</span>
                                 }
                                 else
                                 {
-                                    <span class="badge none">Chưa chạy</span>
+                                    <span class="badge draft">Draft</span>
                                 }
                             </td>
 
-                            <td>@item.CreatedAt.ToString("dd/MM/yy")</td>
+                            <td>@item.CreatedAt.ToString("yyyy-MM-dd")</td>
 
-                            <td>
-                                @* Nút Chạy (Run) - Màu xanh lá *@
-                                <a asp-controller="TestExecutions"
-                                   asp-action="Create"
-                                   asp-route-testCaseId="@item.Id"
-                                   class="btn-custom btn-sm-custom btn-run"
-                                   title="Chạy Test">
-                                    ▶ Chạy
+                            <td class="action text-right">
+
+                                <a asp-controller="TestExecutions" asp-action="Create" asp-route-testCaseId="@item.Id" title="Run Test">
+                                    <i class="fa-solid fa-play"></i>
                                 </a>
 
-                                @* Các nút thao tác chuẩn *@
-                                <a asp-action="Details" asp-route-id="@item.Id" class="btn-custom btn-sm-custom btn-detail">Chi tiết</a>
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn-custom btn-sm-custom btn-edit">Sửa</a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn-custom btn-sm-custom btn-delete">Xóa</a>
+                                <a href="#" title="Clone" onclick="alert('Tính năng Clone đang phát triển')">
+                                    <i class="fa-regular fa-copy"></i>
+                                </a>
+
+                                <a asp-action="Edit" asp-route-id="@item.Id" title="Edit">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+
+                                <a asp-action="Delete" asp-route-id="@item.Id" title="Delete" class="delete-icon">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
                             </td>
                         </tr>
                     }

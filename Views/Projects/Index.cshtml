@@ -1,79 +1,104 @@
 ﻿@model IEnumerable<WebsiteQL_Testcase.Models.Project>
 
 @{
-    ViewData["Title"] = "Danh sách Project";
+    ViewData["Title"] = "Project Management";
 }
 
-@* ================= HEADER & ACTIONS ================= *@
-<div class="page-header-container">
-    <div class="page-title">
-        <h2>Projects</h2>
+<div class="project-page-wrapper">
+    <div class="project-heading">
+        <h1>Project</h1>
+        <p>Manage your project</p>
     </div>
 
-    <div class="page-actions">
-        <a asp-action="Create" class="btn-custom btn-create">
-            + Tạo Project Mới
-        </a>
+    <div class="main-card">
+
+        <div class="card-toolbar">
+
+            <form asp-controller="Projects" asp-action="Index" method="get" style="display: flex;">
+                <div class="search-wrapper">
+                    <input type="text"
+                           name="searchString"
+                           value="@ViewData["CurrentFilter"]"
+                           placeholder="Search"
+                           class="search-input" />
+
+                    <button type="submit" style="background:none; border:none; cursor:pointer;" class="search-icon">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+            </form>
+
+            <a asp-action="Create" class="btn-add-project">
+                + Add new project
+            </a>
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert-box" id="successAlert" style="margin: 0 20px 20px 20px;">
+                <span>@TempData["Success"]</span>
+                <button type="button" class="btn-close-alert" onclick="document.getElementById('successAlert').style.display='none'">×</button>
+            </div>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <p>No projects found. Add a new project to get started.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">Project name</th>
+                            <th style="width: 40%;">Description</th>
+                            <th style="width: 20%; text-align: center;">Total test case</th>
+                            <th style="width: 15%; text-align: center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="project-link">
+                                        @item.Name
+                                    </a>
+                                </td>
+                                <td class="text-muted">
+                                    @(string.IsNullOrEmpty(item.Description) ? "" : item.Description)
+                                </td>
+                                <td style="text-align: center;">
+                                    36
+                                </td>
+                                <td class="action-cell">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" title="Edit" class="icon-btn edit">
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                    </a>
+
+                                    <a asp-action="Delete" asp-route-id="@item.Id" title="Delete" class="icon-btn delete">
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination-container">
+                <div class="pagination">
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <span class="page-dots">...</span>
+                    <button class="page-btn">67</button>
+                    <button class="page-btn">68</button>
+                </div>
+            </div>
+        }
     </div>
 </div>
-
-@* ================= THÔNG BÁO (ALERT) ================= *@
-@if (TempData["Success"] != null)
-{
-    <div class="alert-box" id="successAlert">
-        <span>@TempData["Success"]</span>
-        <button type="button" class="btn-close-alert" onclick="document.getElementById('successAlert').style.display='none'">×</button>
-    </div>
-}
-
-@* ================= NỘI DUNG BẢNG ================= *@
-@if (!Model.Any())
-{
-    <div class="empty-state">
-        <h4>Chưa có Project nào</h4>
-        <p>Hãy tạo Project đầu tiên để bắt đầu quản lý Test Case.</p>
-        <a asp-action="Create" style="color: #007bff; text-decoration: none; font-weight: bold;">
-            Tạo Project ngay
-        </a>
-    </div>
-}
-else
-{
-    <div class="table-container">
-        <table class="custom-table">
-            <thead>
-                <tr>
-                    <th>Tên Project</th>
-                    <th>Mô tả</th>
-                    <th>Ngày tạo</th>
-                    <th style="width: 250px;">Hành động</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            @* Click vào tên để xem chi tiết luôn cho tiện *@
-                            <a asp-action="Details" asp-route-id="@item.Id" style="font-weight: bold; color: inherit; text-decoration: none;">
-                                @item.Name
-                            </a>
-                        </td>
-                        <td>
-                            @(string.IsNullOrEmpty(item.Description) ? "-" : item.Description)
-                        </td>
-                        <td>
-                            @item.CreatedAt.ToString("dd/MM/yyyy")
-                        </td>
-                        <td>
-                            @* Các nút bấm chuẩn style mới *@
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn-custom btn-sm-custom btn-detail">Chi tiết</a>
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn-custom btn-sm-custom btn-edit">Sửa</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn-custom btn-sm-custom btn-delete">Xóa</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-}

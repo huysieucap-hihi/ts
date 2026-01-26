@@ -15,12 +15,32 @@ namespace WebsiteQL_Testcase.Controllers
         }
 
         // GET: Projects
-        public async Task<IActionResult> Index()
+        // Cập nhật để nhận tham số tìm kiếm
+        public async Task<IActionResult> Index(string searchString)
         {
-            var projects = await _context.Projects
-                .Include(p => p.TestSuites)
-                .OrderByDescending(p => p.CreatedAt)
-                .ToListAsync();
+            // 1. Lưu từ khóa tìm kiếm vào ViewData để hiển thị lại trên View
+            ViewData["CurrentFilter"] = searchString;
+
+            // 2. Khởi tạo truy vấn cơ bản (chưa thực thi)
+            var projectsQuery = _context.Projects
+                .Include(p => p.TestSuites) // Eager loading nếu cần
+                .AsQueryable();
+
+            // 3. Nếu có từ khóa tìm kiếm, thêm điều kiện lọc
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                // Lọc theo Tên Project hoặc Mô tả (không phân biệt hoa thường)
+                projectsQuery = projectsQuery.Where(p =>
+                    p.Name.Contains(searchString) ||
+                    (p.Description != null && p.Description.Contains(searchString)));
+            }
+
+            // 4. Sắp xếp: Mới nhất lên đầu
+            projectsQuery = projectsQuery.OrderByDescending(p => p.CreatedAt);
+
+            // 5. Thực thi truy vấn và trả về danh sách
+            var projects = await projectsQuery.ToListAsync();
+
             return View(projects);
         }
 
@@ -42,6 +62,7 @@ namespace WebsiteQL_Testcase.Controllers
         {
             return View();
         }
+
         // POST: Projects/Create
         [HttpPost]
         [ValidateAntiForgeryToken]

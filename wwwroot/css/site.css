@@ -1192,3 +1192,1000 @@ input, textarea, select {
         background-color: #1d4ed8 !important;
         border-color: #1d4ed8 !important;
     }
+/* =========================================
+   1. KHAI BÁO BIẾN & RESET
+   ========================================= */
+:root {
+    --bg-color: #f8f9fa; /* Màu nền tổng thể */
+    --text-color: #333; /* Màu chữ chính */
+    --sidebar-bg: #ffffff; /* Màu nền sidebar */
+    --sidebar-width: 260px; /* Chiều rộng sidebar */
+    --primary-color: #4f46e5; /* Màu chủ đạo (Xanh tím) */
+    --hover-bg: #eef2ff; /* Màu nền khi di chuột vào */
+    --border-color: #e5e7eb; /* Màu viền */
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Biến màu cho Dark Mode */
+[data-theme="dark"] {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --sidebar-bg: #1e1e1e;
+    --primary-color: #818cf8;
+    --hover-bg: #2d2d2d;
+    --border-color: #333;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+    height: 100vh;
+    overflow: hidden; /* Ẩn thanh cuộn ngoài cùng */
+}
+
+/* =========================================
+   2. CẤU TRÚC LAYOUT (FLEXBOX)
+   ========================================= */
+.app-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+/* =========================================
+   3. SIDEBAR (THANH BÊN TRÁI)
+   ========================================= */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    flex-shrink: 0;
+    overflow-y: auto; /* Cho phép cuộn nếu menu dài */
+}
+
+/* Icon Ngôi nhà lớn (Logo) */
+.sidebar-logo {
+    text-align: center;
+    margin-bottom: 30px;
+    margin-top: 10px;
+}
+
+    .sidebar-logo i {
+        font-size: 40px;
+        color: var(--primary-color);
+    }
+
+/* Khu vực chứa menu */
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Form bọc nút (ASP.NET) */
+.nav-form {
+    width: 100%;
+}
+
+/* Link bọc nút */
+.nav-link-wrapper {
+    text-decoration: none;
+    display: block;
+    width: 100%;
+}
+
+/* NÚT MENU CHÍNH */
+.menu-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: none;
+    border: none;
+    border-radius: 12px;
+    color: #666;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    text-decoration: none;
+}
+
+/* Chỉnh màu chữ nút ở chế độ tối */
+[data-theme="dark"] .menu-btn {
+    color: #aaa;
+}
+
+/* Icon bên trái trong nút */
+.menu-btn i:first-child {
+    width: 24px;
+    font-size: 18px;
+    margin-right: 12px;
+    text-align: center;
+}
+
+/* Hiệu ứng Hover */
+.menu-btn:hover {
+    background-color: var(--hover-bg);
+    color: var(--primary-color);
+}
+
+/* Trạng thái đang chọn (Active) */
+.menu-btn.active {
+    background-color: var(--primary-color);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+/* =========================================
+   4. DROPDOWN (MENU CON)
+   ========================================= */
+.nav-dropdown {
+    width: 100%;
+}
+
+/* Mũi tên nhỏ bên phải */
+.arrow-icon {
+    margin-left: auto;
+    font-size: 12px;
+    transition: transform 0.3s;
+}
+
+/* Xoay mũi tên khi mở */
+.menu-btn.open .arrow-icon {
+    transform: rotate(180deg);
+}
+
+/* Nội dung bên trong dropdown */
+.dropdown-content {
+    display: none;
+    padding-left: 15px;
+    margin-top: 5px;
+    flex-direction: column;
+    gap: 5px;
+}
+
+    /* Class để hiện dropdown (dùng JS toggle) */
+    .dropdown-content.show {
+        display: flex;
+    }
+
+    /* Link con trong dropdown */
+    .dropdown-content a {
+        display: block;
+        padding: 10px 15px;
+        text-decoration: none;
+        color: var(--text-color);
+        font-size: 14px;
+        border-radius: 8px;
+        opacity: 0.8;
+    }
+
+        .dropdown-content a:hover {
+            background-color: var(--hover-bg);
+            opacity: 1;
+        }
+
+/* =========================================
+   5. PHẦN NỘI DUNG CHÍNH (MAIN CONTENT)
+   ========================================= */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - var(--sidebar-width));
+    overflow-y: auto; /* Cuộn nội dung chính */
+}
+
+/* Header trên cùng */
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: var(--bg-color);
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-color);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+/* Khu vực User Controls (Dark mode, User name, Logout) */
+.user-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Nút icon tròn (Dark mode) */
+.btn-icon {
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+}
+
+    .btn-icon:hover {
+        background-color: var(--hover-bg);
+    }
+
+/* Nút Đăng xuất */
+.btn-logout {
+    background-color: #ef4444; /* Màu đỏ */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+    .btn-logout:hover {
+        background-color: #dc2626;
+    }
+
+/* Body nội dung */
+.content-body {
+    padding: 0 40px 40px 40px;
+    flex-grow: 1;
+}
+
+/* Footer */
+.footer {
+    padding: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: #888;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Header cho trang Login/Register (Khi chưa đăng nhập) */
+.public-header {
+    background: var(--sidebar-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 15px 0;
+}
+
+.public-header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.auth-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-auth {
+    padding: 8px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+    .btn-auth.primary {
+        background: var(--primary-color);
+        color: #fff;
+    }
+
+    .btn-auth.outline {
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+    }
+/* =========================================
+   DASHBOARD STYLES
+   ========================================= */
+
+/* 1. Header Dashboard */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.sub-text {
+    color: #666;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* Search Box */
+.search-wrapper {
+    position: relative;
+}
+
+.search-box {
+    padding: 10px 15px 10px 40px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--sidebar-bg);
+    color: var(--text-color);
+    width: 250px;
+    outline: none;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+/* 2. Stats Grid (3 Card Thống kê) */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background-color: var(--sidebar-bg);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border: 1px solid var(--border-color);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+/* Màu sắc icon từng loại */
+.total-icon {
+    background-color: #e0e7ff;
+    color: #4f46e5;
+}
+
+.pass-icon {
+    background-color: #dcfce7;
+    color: #16a34a;
+}
+
+.fail-icon {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.stat-number {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0;
+}
+
+/* 3. Dashboard Cards (Chart & List) */
+.dashboard-card {
+    background-color: var(--sidebar-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    .card-header h4 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+.view-all {
+    font-size: 13px;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Chart Progress Bar Style */
+.progress-bar-wrapper {
+    width: 100%;
+    height: 24px;
+    background-color: #f3f4f6;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+}
+
+.bar-segment {
+    height: 100%;
+    transition: width 0.5s ease;
+}
+
+    .bar-segment.pass {
+        background-color: #22c55e;
+    }
+    /* Xanh lá */
+    .bar-segment.fail {
+        background-color: #ef4444;
+    }
+/* Đỏ */
+
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+    .dot.pass {
+        background-color: #22c55e;
+    }
+
+    .dot.fail {
+        background-color: #ef4444;
+    }
+
+/* 4. Lists Grid (2 cột dưới cùng) */
+.lists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.list-group {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+    .list-item:last-child {
+        border-bottom: none;
+    }
+
+/* Badge styles */
+.badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+    .badge.pass {
+        background-color: #dcfce7;
+        color: #166534;
+    }
+
+    .badge.fail {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .badge.draft {
+        background-color: #f3f4f6;
+        color: #4b5563;
+    }
+
+/* Dark mode overrides */
+[data-theme="dark"] .search-box {
+    background-color: #2d2d2d;
+    border-color: #444;
+}
+
+[data-theme="dark"] .sub-text,
+[data-theme="dark"] .stat-label {
+    color: #aaa;
+}
+
+[data-theme="dark"] .badge.pass {
+    background-color: #064e3b;
+    color: #6ee7b7;
+}
+
+[data-theme="dark"] .badge.fail {
+    background-color: #7f1d1d;
+    color: #fca5a5;
+}
+
+[data-theme="dark"] .badge.draft {
+    background-color: #374151;
+    color: #d1d5db;
+}
+/* =========================================
+   TEST CASE PAGE STYLES
+   ========================================= */
+
+/* Header Flex Layout */
+.page-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 25px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* Custom Buttons */
+.btn-primary-custom {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+    .btn-primary-custom:hover {
+        background-color: #4338ca;
+    }
+
+.btn-outline-custom {
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+    .btn-outline-custom:hover {
+        background-color: var(--hover-bg);
+    }
+
+
+/* FILTER BOX STYLES (Giống mẫu) */
+.filter-box {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.search-wrapper-flat {
+    position: relative;
+    flex-grow: 1;
+    max-width: 400px;
+}
+
+    .search-wrapper-flat i {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #999;
+    }
+
+    .search-wrapper-flat input {
+        width: 100%;
+        padding: 10px 15px 10px 35px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        outline: none;
+        font-size: 14px;
+        background-color: var(--sidebar-bg);
+        color: var(--text-color);
+    }
+
+.select-flat {
+    padding: 10px 35px 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--sidebar-bg);
+    color: var(--text-color);
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+    appearance: none; /* Xóa mũi tên mặc định */
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23999%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px top 50%;
+    background-size: 10px auto;
+}
+
+
+/* TABLE FLAT STYLES */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table-flat {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+    .table-flat th {
+        text-align: left;
+        padding: 15px;
+        color: #888;
+        font-weight: 600;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .table-flat td {
+        padding: 15px;
+        border-bottom: 1px solid var(--border-color);
+        vertical-align: middle;
+        color: var(--text-color);
+    }
+
+.td-title {
+    display: flex;
+    flex-direction: column;
+}
+
+    .td-title a {
+        font-weight: 500;
+        color: var(--text-color);
+        text-decoration: none;
+        margin-bottom: 2px;
+    }
+
+        .td-title a:hover {
+            color: var(--primary-color);
+        }
+
+.code-ref {
+    font-size: 12px;
+    color: #999;
+}
+
+/* Action Icons Column */
+.table-flat td.action {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end; /* Căn phải icon */
+    align-items: center;
+}
+
+    .table-flat td.action a {
+        color: #999;
+        font-size: 16px;
+        transition: color 0.2s;
+        text-decoration: none;
+    }
+
+        .table-flat td.action a:hover {
+            color: var(--primary-color);
+        }
+
+        .table-flat td.action a.delete-icon:hover {
+            color: #ef4444;
+        }
+
+/* Tiện ích */
+.text-right {
+    text-align: right;
+}
+/* =========================================
+   PROJECT PAGE STYLES (Giống hình mẫu)
+   ========================================= */
+
+.project-page-wrapper {
+    padding: 20px 0;
+    max-width: 100%;
+}
+
+/* 1. Heading (Project / Manage your project) */
+.project-heading {
+    margin-bottom: 20px;
+}
+
+    .project-heading h1 {
+        font-size: 28px;
+        font-weight: 600;
+        color: #000;
+        margin-bottom: 5px;
+    }
+
+    .project-heading p {
+        color: #666;
+        font-size: 14px;
+        margin: 0;
+    }
+
+/* 2. Main Card Container */
+.main-card {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px; /* Bo góc khung lớn */
+    padding: 30px 0; /* Padding trên dưới */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+/* 3. Toolbar (Search & Button) */
+.card-toolbar {
+    display: flex;
+    justify-content: flex-end; /* Đẩy nội dung sang phải */
+    align-items: center;
+    gap: 15px;
+    padding: 0 30px 30px 30px; /* Padding trái phải */
+}
+
+/* Search Box */
+.search-wrapper {
+    position: relative;
+    width: 300px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 40px 10px 15px; /* Chừa chỗ cho icon bên phải */
+    border: 1px solid #ccc;
+    border-radius: 20px; /* Bo tròn thanh tìm kiếm */
+    font-size: 14px;
+    outline: none;
+    color: #333;
+}
+
+.search-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    font-size: 14px;
+}
+
+/* Button Add Project (Màu xanh dương) */
+.btn-add-project {
+    background-color: #3b82f6; /* Màu xanh giống hình */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background 0.2s;
+}
+
+    .btn-add-project:hover {
+        background-color: #2563eb;
+        color: #fff;
+    }
+
+/* 4. Table Styles */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+    /* Table Header */
+    .modern-table thead th {
+        text-align: left;
+        padding: 15px 30px;
+        font-weight: 700;
+        font-size: 15px;
+        color: #000;
+        border-bottom: 1px solid #ddd; /* Đường kẻ dưới header */
+        border-top: 1px solid #ddd; /* Đường kẻ trên header */
+        background-color: #fff;
+    }
+
+    /* Table Body */
+    .modern-table tbody td {
+        padding: 20px 30px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+        color: #333;
+        font-size: 15px;
+    }
+
+    /* Text Styles */
+    .modern-table .fw-bold {
+        font-weight: 600;
+        color: #000;
+    }
+
+    .modern-table .text-muted {
+        color: #555;
+    }
+
+.project-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+    .project-link:hover {
+        text-decoration: underline;
+    }
+
+/* Action Icons */
+.action-cell {
+    text-align: center;
+}
+
+.icon-btn {
+    font-size: 18px;
+    margin: 0 8px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+    cursor: pointer;
+}
+
+    .icon-btn.edit {
+        color: #666;
+    }
+    /* Màu xám đen giống hình */
+    .icon-btn.delete {
+        color: #ef4444;
+    }
+    /* Màu đỏ giống hình */
+    .icon-btn:hover {
+        opacity: 0.7;
+    }
+
+/* 5. Pagination (Phân trang) */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.page-btn {
+    background: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+}
+
+    .page-btn.active {
+        background-color: #333; /* Màu nền đen cho trang hiện tại */
+        color: #fff;
+    }
+
+    .page-btn:hover:not(.active) {
+        background-color: #f3f4f6;
+    }
+
+.page-dots {
+    color: #888;
+    letter-spacing: 2px;
+}
+
+/* Dark Mode Support (Nếu cần) */
+[data-theme="dark"] .main-card,
+[data-theme="dark"] .modern-table thead th {
+    background-color: #1e1e1e;
+    border-color: #333;
+    color: #fff;
+}
+
+[data-theme="dark"] .project-heading h1,
+[data-theme="dark"] .modern-table .fw-bold {
+    color: #fff;
+}
+
+[data-theme="dark"] .modern-table tbody td {
+    border-color: #333;
+    color: #ccc;
+}
+
+[data-theme="dark"] .icon-btn.edit {
+    color: #aaa;
+}
+/* Tìm class .search-icon cũ và thay thế/cập nhật bằng đoạn này */
+.search-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    font-size: 14px;
+    padding: 0; /* Reset padding của button */
+    display: flex; /* Căn giữa icon trong button */
+    align-items: center;
+}
+
+    .search-icon:hover {
+        color: var(--primary-color); /* Đổi màu khi di chuột vào icon */
+    }
