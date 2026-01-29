@@ -4,26 +4,19 @@
     ViewData["Title"] = "Project Management";
 }
 
-<div class="project-page-wrapper">
-    <div class="project-heading">
-        <h1>Project</h1>
-        <p>Manage your project</p>
-    </div>
-
+<div class="khungvien">
     <div class="main-card">
 
         <div class="card-toolbar">
-
             <form asp-controller="Projects" asp-action="Index" method="get" style="display: flex;">
                 <div class="search-wrapper">
                     <input type="text"
                            name="searchString"
                            value="@ViewData["CurrentFilter"]"
-                           placeholder="Search"
+                           placeholder="Search by project name..."
                            class="search-input" />
 
-                    <button type="submit" style="background:none; border:none; cursor:pointer;" class="search-icon">
-                        <i class="fa-solid fa-magnifying-glass"></i>
+                    <button type="submit" style="background:none; border:none; cursor:pointer;"
                     </button>
                 </div>
             </form>
@@ -44,7 +37,7 @@
         @if (!Model.Any())
         {
             <div class="empty-state">
-                <p>No projects found. Add a new project to get started.</p>
+                <p>No projects found matching your search.</p>
             </div>
         }
         else
@@ -87,17 +80,6 @@
                         }
                     </tbody>
                 </table>
-            </div>
-
-            <div class="pagination-container">
-                <div class="pagination">
-                    <button class="page-btn active">1</button>
-                    <button class="page-btn">2</button>
-                    <button class="page-btn">3</button>
-                    <span class="page-dots">...</span>
-                    <button class="page-btn">67</button>
-                    <button class="page-btn">68</button>
-                </div>
             </div>
         }
     </div>

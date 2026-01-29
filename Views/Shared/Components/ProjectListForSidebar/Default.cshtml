@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<dynamic>
+<ul style="list-style: none; padding-left: 0; margin: 0;">
 
 @if (!Model.Any())
 {
@@ -10,7 +11,7 @@ else
 {
     @foreach (var project in Model)
     {
-        <li>
+        <li style="margin-bottom: 5px;">
             <a class="dropdown-item d-flex justify-content-between align-items-center"
                asp-controller="TestSuites"
                asp-action="Index"
@@ -20,11 +21,5 @@ else
             </a>
         </li>
     }
-
-    <li><hr class="dropdown-divider"></li>
-    <li>
-        <a class="dropdown-item text-center fw-bold" asp-controller="Projects" asp-action="Index">
-            Xem tất cả Projects →
-        </a>
-    </li>
 }
+</ul>

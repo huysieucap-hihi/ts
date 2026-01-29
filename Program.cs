@@ -13,7 +13,8 @@ namespace WebsiteQL_Testcase
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.WebHost.UseUrls("http://0.0.0.0:5000");
-            // Add services to the container.
+
+            // 1. Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
                                    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
@@ -22,26 +23,32 @@ namespace WebsiteQL_Testcase
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            // ĐĂNG KÝ IDENTITY VỚI APPUSER (CUSTOM USER)
-            builder.Services.AddDefaultIdentity<AppUser>(options =>
-            {
-                options.SignIn.RequireConfirmedAccount = true; // Có thể đổi false nếu không cần confirm email
-            })
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+            // Cấu hình Identity
+            builder.Services.AddIdentity<AppUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders()
+                .AddDefaultUI();
+
+            // --- QUAN TRỌNG: CẤU HÌNH ĐƯỜNG DẪN LOGIN ĐÚNG ---
+            // Đoạn này giúp sửa lỗi 404 khi bấm Login
             builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Identity/Account/Login";
+                options.LogoutPath = "/Identity/Account/Logout";
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
             });
-    
+            // -------------------------------------------------
+
+            // Thêm dịch vụ Razor Pages (Cần cho Identity UI)
+            builder.Services.AddRazorPages();
 
             // CONTROLLERS WITH VIEWS + VIEW LOCALIZATION
             builder.Services.AddControllersWithViews()
-                .AddViewLocalization(); // Cho phép @inject IViewLocalizer trong View
+                .AddViewLocalization();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // 2. Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();
@@ -55,21 +62,21 @@ namespace WebsiteQL_Testcase
             //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseRequestLocalization(); // Phải đặt trước UseRouting
+            app.UseRequestLocalization();
 
             app.UseRouting();
 
-            // THÊM DÒNG NÀY NẾU CHƯA CÓ (QUAN TRỌNG CHO IDENTITY)
+            // Middleware xác thực (Identity)
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // Định tuyến cho Controller (MVC)
             app.MapControllerRoute(
               name: "default",
               pattern: "{controller=Dashboard}/{action=Index}/{id?}");
 
-
-
-            app.MapRazorPages(); // Cần cho các trang Identity (Login, Register...)
+            // Định tuyến cho Razor Pages (Identity UI)
+            app.MapRazorPages();
 
             app.Run();
         }

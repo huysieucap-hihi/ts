@@ -18,30 +18,22 @@ namespace WebsiteQL_Testcase.Controllers
         // Cập nhật để nhận tham số tìm kiếm
         public async Task<IActionResult> Index(string searchString)
         {
-            // 1. Lưu từ khóa tìm kiếm vào ViewData để hiển thị lại trên View
+            var projects = from p in _context.Projects
+                           select p;
+
+            // 2. Lưu lại từ khóa tìm kiếm vào ViewData để hiển thị lại trên ô input
             ViewData["CurrentFilter"] = searchString;
 
-            // 2. Khởi tạo truy vấn cơ bản (chưa thực thi)
-            var projectsQuery = _context.Projects
-                .Include(p => p.TestSuites) // Eager loading nếu cần
-                .AsQueryable();
-
-            // 3. Nếu có từ khóa tìm kiếm, thêm điều kiện lọc
-            if (!string.IsNullOrEmpty(searchString))
+            // 3. Logic tìm kiếm: Nếu có chuỗi tìm kiếm thì lọc theo tên
+            if (!String.IsNullOrEmpty(searchString))
             {
-                // Lọc theo Tên Project hoặc Mô tả (không phân biệt hoa thường)
-                projectsQuery = projectsQuery.Where(p =>
-                    p.Name.Contains(searchString) ||
-                    (p.Description != null && p.Description.Contains(searchString)));
+                // Contains tương đương với SQL LIKE '%text%'
+                projects = projects.Where(s => s.Name.Contains(searchString));
             }
 
-            // 4. Sắp xếp: Mới nhất lên đầu
-            projectsQuery = projectsQuery.OrderByDescending(p => p.CreatedAt);
-
-            // 5. Thực thi truy vấn và trả về danh sách
-            var projects = await projectsQuery.ToListAsync();
-
-            return View(projects);
+            // 4. Trả về danh sách (Bỏ phân trang, dùng ToListAsync để lấy hết)
+            // Sắp xếp ID giảm dần để bài mới nhất lên đầu (tùy chọn)
+            return View(await projects.OrderByDescending(p => p.Id).ToListAsync());
         }
 
         // GET: Projects/Details/5

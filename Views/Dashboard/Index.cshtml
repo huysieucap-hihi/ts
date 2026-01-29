@@ -2,18 +2,7 @@
 @{
     ViewData["Title"] = "Dashboard";
 }
-
-<div class="dashboard-header">
-    <div>
-        <h2 class="page-title">Dashboard</h2>
-        <p class="sub-text">Overview of your test case execution</p>
-    </div>
-    <div class="search-wrapper">
-        <input type="text" class="search-box" placeholder="Search..." />
-        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-    </div>
-</div>
-
+<div class="khungvien">
 <div class="stats-grid">
     <div class="stat-card">
         <div class="stat-icon total-icon">
@@ -82,26 +71,27 @@
     <div class="dashboard-card">
         <div class="card-header">
             <h4>Latest Test Cases</h4>
-            <a href="#" class="view-all">View all</a>
         </div>
         <div class="card-body">
             <ul class="list-group">
-                <li class="list-item">
-                    <span>Login Validation</span>
-                    <span class="badge pass">Pass</span>
-                </li>
-                <li class="list-item">
-                    <span>Payment Gateway</span>
-                    <span class="badge fail">Fail</span>
-                </li>
-                <li class="list-item">
-                    <span>User Profile Update</span>
-                    <span class="badge pass">Pass</span>
-                </li>
-                <li class="list-item">
-                    <span>Forgot Password</span>
-                    <span class="badge draft">Draft</span>
-                </li>
+                @if (Model.LatestTestCases != null && Model.LatestTestCases.Any())
+                {
+                    @foreach (var item in Model.LatestTestCases)
+                    {
+                        var statusClass = item.Status.ToLower();
+
+                        <li class="list-item">
+                            <span>@item.Name</span>
+                            <span class="badge @statusClass">@item.Status</span>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="list-item" style="justify-content: center; color: #999;">
+                        <span>No recent test cases found.</span>
+                    </li>
+                }
             </ul>
         </div>
     </div>
@@ -112,28 +102,28 @@
         </div>
         <div class="card-body">
             <ul class="list-group">
-                <li class="list-item">
-                    <div style="display:flex; flex-direction:column;">
-                        <span style="font-weight:500">E-commerce Web</span>
-                        <span style="font-size:12px; color:#888;">Updated 2 hours ago</span>
-                    </div>
-                    <i class="fa-solid fa-angle-right" style="color:#ccc"></i>
-                </li>
-                <li class="list-item">
-                    <div style="display:flex; flex-direction:column;">
-                        <span style="font-weight:500">Mobile Banking App</span>
-                        <span style="font-size:12px; color:#888;">Updated 1 day ago</span>
-                    </div>
-                    <i class="fa-solid fa-angle-right" style="color:#ccc"></i>
-                </li>
-                <li class="list-item">
-                    <div style="display:flex; flex-direction:column;">
-                        <span style="font-weight:500">Internal CRM</span>
-                        <span style="font-size:12px; color:#888;">Updated 3 days ago</span>
-                    </div>
-                    <i class="fa-solid fa-angle-right" style="color:#ccc"></i>
-                </li>
+                @if (Model.LatestProjects != null && Model.LatestProjects.Any())
+                {
+                    @foreach (var item in Model.LatestProjects)
+                    {
+                        <li class="list-item">
+                            <div style="display:flex; flex-direction:column;">
+                                <span style="font-weight:500">@item.Name</span>
+                                <span style="font-size:12px; color:#888;">
+                                    Updated: @item.UpdatedDate.ToString("dd/MM/yyyy HH:mm")
+                                </span>
+                            </div>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="list-item" style="justify-content: center; color: #999;">
+                        <span>No recent projects found.</span>
+                    </li>
+                }
             </ul>
         </div>
     </div>
+</div>
 </div>

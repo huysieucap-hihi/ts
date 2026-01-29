@@ -34,34 +34,6 @@
         });
     });
 
-
-    // ================= 2. XỬ LÝ DARK MODE =================
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    const themeIcon = document.getElementById('theme-icon');
-    const htmlElement = document.documentElement;
-
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-        htmlElement.setAttribute('data-theme', 'dark');
-        if (themeIcon) themeIcon.textContent = '☀️';
-    }
-
-    if (themeToggleBtn) {
-        themeToggleBtn.addEventListener('click', () => {
-            const currentTheme = htmlElement.getAttribute('data-theme');
-            if (currentTheme === 'dark') {
-                htmlElement.removeAttribute('data-theme');
-                localStorage.setItem('theme', 'light');
-                if (themeIcon) themeIcon.textContent = '🌙';
-            } else {
-                htmlElement.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-                if (themeIcon) themeIcon.textContent = '☀️';
-            }
-        });
-    }
-
-
     // ================= 3. XỬ LÝ USER MENU (Góc trên phải) =================
     const userTrigger = document.getElementById("userTrigger"); // Lưu ý: Trong Layout bạn chưa đặt ID này cho tên user
     // Nếu trong Layout bạn chưa có id="userTrigger", đoạn này có thể chưa chạy.

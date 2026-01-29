@@ -17,7 +17,10 @@ body {
     background: linear-gradient(90deg, #e2e2e2, #c9d6ff); /* Nền Gradient Login */
     color: #1f2937;
 }
-
+.khungvien {
+    margin-top: 75px;
+    padding: 0;
+}
 /* ================= APP LAYOUT ================= */
 .app-layout {
     display: flex;
@@ -1985,13 +1988,14 @@ body {
     box-shadow: 0 2px 5px rgba(0,0,0,0.02);
 }
 
-/* 3. Toolbar (Search & Button) */
 .card-toolbar {
     display: flex;
-    justify-content: flex-end; /* Đẩy nội dung sang phải */
+    justify-content: space-between;
+
     align-items: center;
     gap: 15px;
-    padding: 0 30px 30px 30px; /* Padding trái phải */
+    padding: 0 30px 30px 30px;
+    width: 100%;
 }
 
 /* Search Box */
@@ -2010,18 +2014,8 @@ body {
     color: #333;
 }
 
-.search-icon {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #888;
-    font-size: 14px;
-}
-
-/* Button Add Project (Màu xanh dương) */
 .btn-add-project {
-    background-color: #3b82f6; /* Màu xanh giống hình */
+    background-color: greenyellow;
     color: white;
     padding: 10px 20px;
     border-radius: 6px;
@@ -2151,41 +2145,3 @@ body {
     color: #888;
     letter-spacing: 2px;
 }
-
-/* Dark Mode Support (Nếu cần) */
-[data-theme="dark"] .main-card,
-[data-theme="dark"] .modern-table thead th {
-    background-color: #1e1e1e;
-    border-color: #333;
-    color: #fff;
-}
-
-[data-theme="dark"] .project-heading h1,
-[data-theme="dark"] .modern-table .fw-bold {
-    color: #fff;
-}
-
-[data-theme="dark"] .modern-table tbody td {
-    border-color: #333;
-    color: #ccc;
-}
-
-[data-theme="dark"] .icon-btn.edit {
-    color: #aaa;
-}
-/* Tìm class .search-icon cũ và thay thế/cập nhật bằng đoạn này */
-.search-icon {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #888;
-    font-size: 14px;
-    padding: 0; /* Reset padding của button */
-    display: flex; /* Căn giữa icon trong button */
-    align-items: center;
-}
-
-    .search-icon:hover {
-        color: var(--primary-color); /* Đổi màu khi di chuột vào icon */
-    }
