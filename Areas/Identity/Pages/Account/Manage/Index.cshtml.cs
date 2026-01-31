@@ -1,15 +1,12 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-#nullable disable
-
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebsiteQL_Testcase.Models;
+using WebsiteQL_Testcase.Models; // Đảm bảo dòng này trỏ đúng namespace chứa class AppUser của bạn
 
 namespace WebsiteQL_Testcase.Areas.Identity.Pages.Account.Manage
 {
@@ -26,39 +23,26 @@ namespace WebsiteQL_Testcase.Areas.Identity.Pages.Account.Manage
             _signInManager = signInManager;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public string Username { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        // BIẾN MỚI: Dùng để chứa danh sách Role hiển thị ra View
+        public IList<string> UserRoles { get; set; }
+
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Phone]
-            [Display(Name = "Phone number")]
+            [Display(Name = "Số điện thoại")]
             public string PhoneNumber { get; set; }
+
+            // BIẾN MỚI: Thêm FullName vào Input để cho phép sửa
+            [Display(Name = "Họ và tên")]
+            public string FullName { get; set; }
         }
 
         private async Task LoadAsync(AppUser user)
@@ -68,9 +52,14 @@ namespace WebsiteQL_Testcase.Areas.Identity.Pages.Account.Manage
 
             Username = userName;
 
+            // LẤY DANH SÁCH ROLE CỦA USER
+            UserRoles = await _userManager.GetRolesAsync(user);
+
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                // LẤY FULLNAME TỪ DATABASE ĐỔ VÀO Ô INPUT
+                FullName = user.FullName
             };
         }
 
@@ -100,6 +89,7 @@ namespace WebsiteQL_Testcase.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
+            // 1. XỬ LÝ LƯU SỐ ĐIỆN THOẠI (Logic mặc định)
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             if (Input.PhoneNumber != phoneNumber)
             {
@@ -111,8 +101,22 @@ namespace WebsiteQL_Testcase.Areas.Identity.Pages.Account.Manage
                 }
             }
 
+            // 2. XỬ LÝ LƯU FULL NAME (Logic thêm mới)
+            // Nếu tên nhập vào khác tên trong DB thì mới lưu
+            if (Input.FullName != user.FullName)
+            {
+                user.FullName = Input.FullName;
+                var updateResult = await _userManager.UpdateAsync(user);
+
+                if (!updateResult.Succeeded)
+                {
+                    StatusMessage = "Lỗi khi cập nhật Họ tên.";
+                    return RedirectToPage();
+                }
+            }
+
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
+            StatusMessage = "Hồ sơ của bạn đã được cập nhật thành công.";
             return RedirectToPage();
         }
     }

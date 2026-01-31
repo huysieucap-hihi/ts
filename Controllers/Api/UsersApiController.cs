@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebsiteQL_Testcase.DTOs; // Nhớ using namespace chứa DTO vừa tạo
+using WebsiteQL_Testcase.DTOs; 
 using WebsiteQL_Testcase.Models;
 
 namespace WebsiteQL_Testcase.Controllers.Api
@@ -10,7 +10,6 @@ namespace WebsiteQL_Testcase.Controllers.Api
     [Route("api/users")]
     public class UsersApiController : ControllerBase
     {
-        // Thay vì DbContext, chúng ta dùng UserManager
         private readonly UserManager<AppUser> _userManager;
 
         public UsersApiController(UserManager<AppUser> userManager)

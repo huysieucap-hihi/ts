@@ -657,17 +657,6 @@ input, textarea, select {
         background-color: #15803d;
     }
 
-/* Đảm bảo Dark mode cũng đẹp */
-[data-theme="dark"] .btn-run {
-    background-color: #16a34a !important;
-    color: white !important;
-}
-
-    [data-theme="dark"] .btn-run:hover {
-        background-color: #15803d !important;
-    }
-
-/* ================= DETAILS PAGE LAYOUT (Mới) ================= */
 
 /* Layout chia 2 cột */
 .details-layout {
@@ -786,177 +775,7 @@ input, textarea, select {
     padding: 20px;
 }
 
-/* ================= DARK MODE DETAILS ================= */
-[data-theme="dark"] .content-box {
-    background-color: #1e293b;
-    border-color: #334155;
-}
-
-[data-theme="dark"] .box-title {
-    color: #fff;
-    border-bottom-color: #334155;
-}
-
-[data-theme="dark"] .info-item .label,
-[data-theme="dark"] .description-block .label {
-    color: #94a3b8;
-}
-
-[data-theme="dark"] .description-block,
-[data-theme="dark"] .history-item {
-    border-color: #334155;
-}
-
-    [data-theme="dark"] .history-item .date {
-        color: #94a3b8;
-    }
-
-/* ================================================================== 
-   3. DARK MODE OVERRIDES (GLOBAL & CUSTOM)
-   ================================================================== */
-
-/* --- A. GLOBAL ELEMENTS --- */
-[data-theme="dark"] body,
-[data-theme="dark"] .main-content {
-    background-color: #0f172a !important; /* Nền tối sẫm */
-    color: #e2e8f0 !important;
-}
-
-[data-theme="dark"] .sidebar,
-[data-theme="dark"] .page-header,
-[data-theme="dark"] .card,
-[data-theme="dark"] .stat-card,
-[data-theme="dark"] .footer,
-[data-theme="dark"] .logout-card,
-[data-theme="dark"] .public-header,
-[data-theme="dark"] .dropdown-menu,
-[data-theme="dark"] .user-dropdown {
-    background-color: #1e293b !important; /* Nền xanh đen */
-    color: #e2e8f0 !important;
-    border-color: #334155 !important;
-}
-
-[data-theme="dark"] .sidebar-header {
-    border-bottom-color: #334155 !important;
-    color: #ffffff !important;
-}
-
-[data-theme="dark"] .sidebar-item {
-    color: #cbd5e1 !important;
-}
-
-    [data-theme="dark"] .sidebar-item:hover,
-    [data-theme="dark"] .sidebar-item:focus {
-        background-color: #334155 !important;
-        color: #ffffff !important;
-    }
-
-    [data-theme="dark"] .sidebar-item.active {
-        background-color: #172554 !important;
-        color: #60a5fa !important;
-        border-right-color: #60a5fa !important;
-    }
-
-[data-theme="dark"] thead {
-    background-color: #334155 !important;
-    color: #ffffff !important;
-    border-bottom-color: #475569 !important;
-}
-
-[data-theme="dark"] th, [data-theme="dark"] td {
-    border-bottom-color: #334155 !important;
-    color: #e2e8f0 !important;
-}
-
-[data-theme="dark"] tbody tr:hover {
-    background-color: #334155 !important;
-}
-
-[data-theme="dark"] input,
-[data-theme="dark"] select,
-[data-theme="dark"] textarea {
-    background-color: #1e293b !important;
-    border-color: #475569 !important;
-    color: #ffffff !important;
-}
-
-[data-theme="dark"] .btn-outline {
-    border-color: #475569 !important;
-    color: #e2e8f0 !important;
-}
-
-    [data-theme="dark"] .btn-outline:hover {
-        background-color: #334155 !important;
-        color: #ffffff !important;
-    }
-
-[data-theme="dark"] .user-trigger {
-    color: #e2e8f0 !important;
-}
-
-[data-theme="dark"] .dropdown-menu a {
-    color: #cbd5e1 !important;
-}
-
-    [data-theme="dark"] .dropdown-menu a:hover {
-        background-color: #334155 !important;
-        color: #ffffff !important;
-    }
-
-[data-theme="dark"] .badge.none,
-[data-theme="dark"] .badge.draft {
-    background-color: #334155 !important;
-    color: #e2e8f0 !important;
-    border-color: #475569 !important;
-}
-
-/* --- B. CUSTOM PAGE ELEMENTS (Test Suites) --- */
-[data-theme="dark"] .page-title h2 {
-    color: #e2e8f0;
-}
-
-[data-theme="dark"] .btn-back {
-    color: #e2e8f0;
-    border-color: #555;
-}
-
-    [data-theme="dark"] .btn-back:hover {
-        background-color: rgba(255,255,255,0.1);
-    }
-
-[data-theme="dark"] .custom-table {
-    background-color: #1e293b;
-    color: #e2e8f0;
-}
-
-    [data-theme="dark"] .custom-table th {
-        background-color: #334155;
-        color: #fff;
-        border-bottom: 1px solid #475569;
-    }
-
-    [data-theme="dark"] .custom-table td {
-        border-bottom: 1px solid #475569;
-    }
-
-    [data-theme="dark"] .custom-table tbody tr:hover {
-        background-color: #334155;
-    }
-
-[data-theme="dark"] .table-container {
-    border: 1px solid #334155;
-    box-shadow: none;
-}
-
-[data-theme="dark"] .empty-state {
-    background-color: #1e293b;
-    color: #aaa;
-}
-
-[data-theme="dark"] .alert-box {
-    background-color: #1e4620;
-    color: #dcfce7;
-    border-color: #166534;
+ border-color: #166534;
 }
 
 /* ================= ALERT DANGER (Dùng cho trang xóa) ================= */
@@ -964,12 +783,6 @@ input, textarea, select {
     background-color: #fef2f2;
     color: #991b1b;
     border-color: #fecaca;
-}
-
-[data-theme="dark"] .alert-box.danger {
-    background-color: #450a0a !important; /* Đỏ rất tối */
-    color: #fca5a5 !important; /* Chữ đỏ sáng */
-    border-color: #7f1d1d !important;
 }
 
 /* Chỉnh lại action group cho đẹp */
@@ -1078,35 +891,6 @@ input, textarea, select {
         color: #dc2626;
     }
 
-/* ================= DARK MODE FORMS ================= */
-[data-theme="dark"] .form-label {
-    color: #e5e7eb;
-}
-
-[data-theme="dark"] .form-input {
-    background-color: #1f2937; /* Nền input tối */
-    border-color: #4b5563;
-    color: #f3f4f6; /* Chữ trắng */
-}
-
-    [data-theme="dark"] .form-input:focus {
-        border-color: #60a5fa;
-        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
-    }
-
-[data-theme="dark"] .form-hint {
-    color: #9ca3af;
-}
-
-[data-theme="dark"] .step-item {
-    background-color: #111827; /* Nền step tối hơn */
-    border-color: #374151;
-}
-
-[data-theme="dark"] .step-badge {
-    background-color: #374151;
-    color: #e5e7eb;
-}
 /* ================= BOX MÀU SẮC (Dùng cho trang Execution Details) ================= */
 
 /* Box Xám (Actual Result) */
@@ -1131,18 +915,6 @@ input, textarea, select {
     white-space: pre-wrap;
 }
 
-/* --- DARK MODE CHO CÁC BOX NÀY --- */
-[data-theme="dark"] .box-gray {
-    background-color: #1f2937; /* Nền tối */
-    border-color: #374151;
-    color: #e5e7eb;
-}
-
-[data-theme="dark"] .box-yellow {
-    background-color: #451a03; /* Nền nâu tối */
-    border-color: #92400e;
-    color: #fcd34d; /* Chữ vàng sáng */
-}
 /* ================= BADGE SỐ LƯỢNG (Dùng chung) ================= */
 .badge-count {
     background-color: #e0e7ff;
@@ -1153,17 +925,8 @@ input, textarea, select {
     font-size: 0.9rem;
 }
 
-[data-theme="dark"] .badge-count {
-    background-color: #312e81; /* Xanh tím tối */
-    color: #c7d2fe; /* Chữ sáng */
-}
 
-/* ================================================================== 
-   TÙY CHỈNH: ĐỒNG BỘ NÚT PHỤ VỀ MÀU XANH DƯƠNG (#2563eb)
-   (Giữ nguyên màu nút Sửa, Xóa, Thêm/Create)
-   ================================================================== */
 
-/* 1. Đổi nút Chi tiết (Detail) và nút Chạy (Run) sang màu xanh dương chủ đạo */
 .btn-detail,
 .btn-run,
 .btn-success {
@@ -1180,21 +943,6 @@ input, textarea, select {
         border-color: #1d4ed8 !important;
     }
 
-/* 3. Xử lý cho Chế độ tối (Dark Mode) */
-[data-theme="dark"] .btn-detail,
-[data-theme="dark"] .btn-run,
-[data-theme="dark"] .btn-success {
-    background-color: #2563eb !important;
-    border-color: #2563eb !important;
-    color: #ffffff !important;
-}
-
-    [data-theme="dark"] .btn-detail:hover,
-    [data-theme="dark"] .btn-run:hover,
-    [data-theme="dark"] .btn-success:hover {
-        background-color: #1d4ed8 !important;
-        border-color: #1d4ed8 !important;
-    }
 /* =========================================
    1. KHAI BÁO BIẾN & RESET
    ========================================= */
@@ -1207,16 +955,6 @@ input, textarea, select {
     --hover-bg: #eef2ff; /* Màu nền khi di chuột vào */
     --border-color: #e5e7eb; /* Màu viền */
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-/* Biến màu cho Dark Mode */
-[data-theme="dark"] {
-    --bg-color: #121212;
-    --text-color: #e0e0e0;
-    --sidebar-bg: #1e1e1e;
-    --primary-color: #818cf8;
-    --hover-bg: #2d2d2d;
-    --border-color: #333;
 }
 
 * {
@@ -1306,10 +1044,6 @@ body {
     text-decoration: none;
 }
 
-/* Chỉnh màu chữ nút ở chế độ tối */
-[data-theme="dark"] .menu-btn {
-    color: #aaa;
-}
 
 /* Icon bên trái trong nút */
 .menu-btn i:first-child {
@@ -1750,37 +1484,6 @@ body {
         background-color: #f3f4f6;
         color: #4b5563;
     }
-
-/* Dark mode overrides */
-[data-theme="dark"] .search-box {
-    background-color: #2d2d2d;
-    border-color: #444;
-}
-
-[data-theme="dark"] .sub-text,
-[data-theme="dark"] .stat-label {
-    color: #aaa;
-}
-
-[data-theme="dark"] .badge.pass {
-    background-color: #064e3b;
-    color: #6ee7b7;
-}
-
-[data-theme="dark"] .badge.fail {
-    background-color: #7f1d1d;
-    color: #fca5a5;
-}
-
-[data-theme="dark"] .badge.draft {
-    background-color: #374151;
-    color: #d1d5db;
-}
-/* =========================================
-   TEST CASE PAGE STYLES
-   ========================================= */
-
-/* Header Flex Layout */
 .page-header-flex {
     display: flex;
     justify-content: space-between;
