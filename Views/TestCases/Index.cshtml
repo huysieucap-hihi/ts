@@ -5,8 +5,13 @@
     var testSuiteId = ViewData["TestSuiteId"] as Guid?;
     var testSuiteName = ViewData["TestSuiteName"] as string;
     var projectName = ViewData["ProjectName"] as string;
-}
 
+    // Lấy các giá trị đang lọc để hiển thị lại lên giao diện
+    var currentFilter = ViewData["CurrentFilter"] as string;
+    var currentStatus = ViewData["CurrentStatus"] as string;
+    var currentPriority = ViewData["CurrentPriority"] as string;
+}
+<div class="khungvien">
 <div id="testcase" class="page-content">
 
     <div class="page-header-flex">
@@ -24,27 +29,36 @@
         </div>
     </div>
 
-    <div class="filter-box">
-        <div class="search-wrapper-flat">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="Search test cases..." />
+    <form asp-action="Index" method="get" id="filterForm">
+
+        <input type="hidden" name="testSuiteId" value="@testSuiteId" />
+
+        <div class="filter-box">
+            <div class="search-wrapper-flat">
+                <button type="submit" style="border:none; background:none; cursor:pointer;">
+                </button>
+
+                <input type="text"
+                       name="searchString"
+                       value="@currentFilter"
+                       placeholder="Search test cases..." />
+            </div>
+
+            <select class="select-flat" name="status" onchange="document.getElementById('filterForm').submit()">
+                <option value="">All Statuses</option>
+                <!option value="Draft" @(currentStatus == "Draft" ? "selected" : "")>Draft</!option>
+                <!option value="Pass" @(currentStatus == "Pass" ? "selected" : "")>Pass</!option>
+                <!option value="Fail" @(currentStatus == "Fail" ? "selected" : "")>Fail</!option>
+            </select>
+
+            <select class="select-flat" name="priority" onchange="document.getElementById('filterForm').submit()">
+                <option value="">All Priorities</option>
+                <!option value="High" @(currentPriority == "High" ? "selected" : "")>High</!option>
+                <!option value="Medium" @(currentPriority == "Medium" ? "selected" : "")>Medium</!option>
+                <!option value="Low" @(currentPriority == "Low" ? "selected" : "")>Low</!option>
+            </select>
         </div>
-
-        <select class="select-flat">
-            <option>All Statuses</option>
-            <option>Draft</option>
-            <option>Pass</option>
-            <option>Fail</option>
-        </select>
-
-        <select class="select-flat">
-            <option>All Priorities</option>
-            <option>High</option>
-            <option>Medium</option>
-            <option>Low</option>
-        </select>
-    </div>
-
+    </form>
     @if (!Model.Any())
     {
         <div class="empty-state">
@@ -93,13 +107,8 @@
                             <td>@item.CreatedAt.ToString("yyyy-MM-dd")</td>
 
                             <td class="action text-right">
-
                                 <a asp-controller="TestExecutions" asp-action="Create" asp-route-testCaseId="@item.Id" title="Run Test">
                                     <i class="fa-solid fa-play"></i>
-                                </a>
-
-                                <a href="#" title="Clone" onclick="alert('Tính năng Clone đang phát triển')">
-                                    <i class="fa-regular fa-copy"></i>
                                 </a>
 
                                 <a asp-action="Edit" asp-route-id="@item.Id" title="Edit">
@@ -116,4 +125,5 @@
             </table>
         </div>
     }
+</div>
 </div>

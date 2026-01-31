@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebsiteQL_Testcase.Data;
 using WebsiteQL_Testcase.Models;
-using WebsiteQL_Testcase.Models.Enums;
+using WebsiteQL_Testcase.Models.Enums; // Đảm bảo đã có namespace này
 
 namespace WebsiteQL_Testcase.Controllers
 {
@@ -16,27 +16,73 @@ namespace WebsiteQL_Testcase.Controllers
         }
 
         // GET: TestCases?testSuiteId=xxx
-        public async Task<IActionResult> Index(Guid testSuiteId)
+        public async Task<IActionResult> Index(Guid testSuiteId, string searchString, string status, string priority)
         {
+            // ====================================================
+            // BƯỚC 1: TRUY VẤN CƠ BẢN & LỌC NHỮNG CỘT CÓ THẬT TRONG DB
+            // ====================================================
+            var testCasesQuery = _context.TestCases
+                .Include(tc => tc.TestSuite)
+                // [Quan trọng] Phải Include Executions để tí nữa C# tính toán được LatestResult
+                .Include(tc => tc.Executions)
+                .Where(tc => tc.TestSuiteId == testSuiteId)
+                .AsQueryable();
+
+            // Lấy thông tin Header (giữ nguyên)
             var testSuite = await _context.TestSuites
                 .Include(s => s.Project)
-                .Include(s => s.TestCases)
-                    .ThenInclude(tc => tc.Executions)
                 .FirstOrDefaultAsync(s => s.Id == testSuiteId);
 
-            if (testSuite == null)
-                return NotFound("Test Suite không tồn tại.");
+            if (testSuite == null) return NotFound("Test Suite không tồn tại.");
 
-            // [QUAN TRỌNG] Truyền đủ ProjectId để nút Quay lại hoạt động
             ViewData["TestSuiteId"] = testSuiteId;
             ViewData["TestSuiteName"] = testSuite.Name;
             ViewData["ProjectId"] = testSuite.ProjectId;
             ViewData["ProjectName"] = testSuite.Project?.Name;
 
-            var testCases = testSuite.TestCases
-                .OrderBy(tc => tc.Code)
-                .ToList();
+            // Lọc tìm kiếm (Database làm được)
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                testCasesQuery = testCasesQuery.Where(s => s.Title.Contains(searchString) || s.Code.Contains(searchString));
+                ViewData["CurrentFilter"] = searchString;
+            }
 
+            // Lọc Priority (Database làm được - vì Priority là cột thật)
+            if (!string.IsNullOrEmpty(priority))
+            {
+                if (Enum.TryParse<TestPriority>(priority, out var priorityEnum))
+                {
+                    testCasesQuery = testCasesQuery.Where(t => t.Priority == priorityEnum);
+                }
+                ViewData["CurrentPriority"] = priority;
+            }
+
+            // ====================================================
+            // BƯỚC 2: LẤY DỮ LIỆU VỀ RAM (Để tránh lỗi SQL không hiểu LatestResult)
+            // ====================================================
+            var testCases = await testCasesQuery
+                .OrderByDescending(tc => tc.CreatedAt)
+                .ToListAsync(); // <--- Lệnh này sẽ ngắt kết nối DB và tải dữ liệu về
+
+            // ====================================================
+            // BƯỚC 3: LỌC STATUS (LATEST RESULT) BẰNG C#
+            // ====================================================
+            if (!string.IsNullOrEmpty(status))
+            {
+                if (status == "Draft")
+                {
+                    // Lọc trên RAM: Những cái chưa chạy lần nào
+                    testCases = testCases.Where(t => t.LatestResult == null).ToList();
+                }
+                else if (Enum.TryParse<TestResult>(status, out var resultEnum))
+                {
+                    // Lọc trên RAM: Những cái có kết quả khớp
+                    testCases = testCases.Where(t => t.LatestResult == resultEnum).ToList();
+                }
+                ViewData["CurrentStatus"] = status;
+            }
+
+            // Trả về danh sách đã lọc
             return View(testCases);
         }
 
@@ -71,9 +117,12 @@ namespace WebsiteQL_Testcase.Controllers
             ViewData["TestSuiteName"] = testSuite.Name;
             ViewData["ProjectName"] = testSuite.Project.Name;
 
-            // Gợi ý Code tự động (ví dụ: TC_001...)
+            // Gợi ý Code tự động
             var count = await _context.TestCases.CountAsync(tc => tc.TestSuiteId == testSuiteId);
-            var safeName = testSuite.Name.ToUpper().Replace(" ", "_"); // Xử lý tên suite để tạo mã đẹp hơn
+            var safeName = testSuite.Name.ToUpper().Replace(" ", "_");
+            // Cắt ngắn tên nếu quá dài để mã không bị xấu
+            if (safeName.Length > 10) safeName = safeName.Substring(0, 10);
+
             var suggestedCode = $"TC_{safeName}_{(count + 1):000}";
 
             var model = new TestCase
@@ -96,25 +145,22 @@ namespace WebsiteQL_Testcase.Controllers
 
             if (!ModelState.IsValid)
             {
-                // [FIX LỖI 1] Load lại thông tin hiển thị nếu nhập lỗi
                 var suite = await _context.TestSuites
                     .Include(s => s.Project)
                     .FirstOrDefaultAsync(s => s.Id == testCase.TestSuiteId);
 
                 if (suite != null)
                 {
-                    ViewData["TestSuiteId"] = suite.Id; // Cần cái này cho nút Quay lại
+                    ViewData["TestSuiteId"] = suite.Id;
                     ViewData["TestSuiteName"] = suite.Name;
                     ViewData["ProjectName"] = suite.Project.Name;
                 }
                 return View(testCase);
             }
 
-            // Tạo thành công
             testCase.Id = Guid.NewGuid();
             testCase.CreatedAt = DateTime.UtcNow;
 
-            // Thêm Steps
             if (Actions != null)
             {
                 for (int i = 0; i < Actions.Count; i++)
@@ -164,21 +210,18 @@ namespace WebsiteQL_Testcase.Controllers
         {
             if (id != postedTestCase.Id) return NotFound();
 
-            // Lấy TestCase gốc từ DB (bao gồm cả Steps để xử lý xóa/thêm)
             var testCaseInDb = await _context.TestCases
                 .Include(tc => tc.Steps)
                 .FirstOrDefaultAsync(tc => tc.Id == id);
 
             if (testCaseInDb == null) return NotFound();
 
-            // Validate thủ công một chút để bỏ qua các lỗi không cần thiết
             ModelState.Remove("TestSuite");
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Cập nhật thông tin chính
                     testCaseInDb.Code = postedTestCase.Code;
                     testCaseInDb.Title = postedTestCase.Title;
                     testCaseInDb.Description = postedTestCase.Description;
@@ -186,7 +229,6 @@ namespace WebsiteQL_Testcase.Controllers
                     testCaseInDb.Status = postedTestCase.Status;
                     testCaseInDb.UpdatedAt = DateTime.UtcNow;
 
-                    // Xử lý Steps: Xóa hết cũ, thêm mới (Cách đơn giản nhất)
                     _context.TestSteps.RemoveRange(testCaseInDb.Steps);
 
                     if (Actions != null)
@@ -216,7 +258,6 @@ namespace WebsiteQL_Testcase.Controllers
                 return RedirectToAction(nameof(Index), new { testSuiteId = testCaseInDb.TestSuiteId });
             }
 
-            // [FIX LỖI 2] Nếu lỗi Validation, phải load lại tên Project/Suite để hiển thị Header
             var suite = await _context.TestSuites
                 .Include(s => s.Project)
                 .FirstOrDefaultAsync(s => s.Id == testCaseInDb.TestSuiteId);
@@ -252,13 +293,13 @@ namespace WebsiteQL_Testcase.Controllers
             var testCase = await _context.TestCases.FindAsync(id);
             if (testCase != null)
             {
-                var suiteId = testCase.TestSuiteId; // Lưu lại ID để redirect
+                var suiteId = testCase.TestSuiteId;
                 _context.TestCases.Remove(testCase);
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Xóa Test Case thành công!";
                 return RedirectToAction(nameof(Index), new { testSuiteId = suiteId });
             }
-            return RedirectToAction("Index", "Home"); // Fallback
+            return RedirectToAction("Index", "Home");
         }
     }
 }
